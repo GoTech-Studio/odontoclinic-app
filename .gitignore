@@ -10,28 +10,19 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
+# testing & coverage
 /coverage
 
-# next.js
+# next.js build outputs
 /.next/
 /out/
+/build/
 
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
+# environment files (STRICT: all variants ignored, only .env.example allowed)
+.env
+.env.*
+.env*.local
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +30,34 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# debug and process logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+# certificates, keys and sensitive credentials
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+
+# operating system files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE & editor configuration
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# local dynamic image uploads & local manifest (never commit user uploads to git)
+/public/images/uploads/
+/src/data/site-images-manifest.json
