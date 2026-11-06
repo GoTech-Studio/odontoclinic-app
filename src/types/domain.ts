@@ -31,7 +31,9 @@ export type ServiceIconType =
   | "whitening"
   | "smile_design"
   | "implants"
-  | "general";
+  | "general"
+  | "root_canal"
+  | "surgery";
 
 export interface ClinicServiceItem {
   id: string;

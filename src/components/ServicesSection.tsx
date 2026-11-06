@@ -194,6 +194,54 @@ function renderServiceIcon(icon: ServiceIconType) {
           />
         </svg>
       );
+    case "root_canal":
+      return (
+        <svg className="w-9 h-9" viewBox="0 0 32 32" fill="none">
+          <defs>
+            <linearGradient id="srvGrad_root" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="10%" stopColor="#0f2236" />
+              <stop offset="90%" stopColor="#009bb3" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M16 6.5C13.5 5 8.5 5 7 8.5C5.5 12 6 16.5 7.5 20.5C8.8 24 10 28 11.5 28C13 28 13.5 25.5 14 22.5C14.5 20 15.2 19 16 19C16.8 19 17.5 20 18 22.5C18.5 25.5 19 28 20.5 28C22 28 23.2 24 24.5 20.5C26 16.5 26.5 12 25 8.5C23.5 5 18.5 5 16 6.5Z"
+            stroke="url(#srvGrad_root)"
+            strokeWidth="1.9"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M13 13.5C13 17 12 21 11.5 24.5M19 13.5C19 17 20 21 20.5 24.5M16 12V18"
+            stroke="url(#srvGrad_root)"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+    case "surgery":
+      return (
+        <svg className="w-9 h-9" viewBox="0 0 32 32" fill="none">
+          <defs>
+            <linearGradient id="srvGrad_surgery" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="10%" stopColor="#0f2236" />
+              <stop offset="90%" stopColor="#009bb3" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M16 4.5L25 8.5V16C25 21.5 21 25.5 16 27.5C11 25.5 7 21.5 7 16V8.5L16 4.5Z"
+            stroke="url(#srvGrad_surgery)"
+            strokeWidth="1.9"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M16 11.5V20.5M11.5 16H20.5"
+            stroke="url(#srvGrad_surgery)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
     case "general":
     default:
       return (
@@ -239,7 +287,7 @@ export function ServicesSection({ onOpenBooking }: ServicesSectionProps) {
               Cuidamos cada detalle<br />de tu sonrisa
             </h2>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-8">
-              Ofrecemos una atención integral con tratamientos personalizados, tecnología actualizada y un enfoque centrado en tu bienestar.
+              Una atención integral y personalizada para devolverle la salud y confianza a tu boca. Combinamos experiencia, tecnología y un trato cercano pensado en tu bienestar.
             </p>
             <button
               type="button"

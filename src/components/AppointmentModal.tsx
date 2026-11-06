@@ -36,10 +36,10 @@ export function AppointmentModal({
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [specialty, setSpecialty] = useState(
-    SERVICES_OPTIONS[0] || "Limpieza dental"
+    SERVICES_OPTIONS[0] || "Limpieza profunda"
   );
   const [preferredTime, setPreferredTime] = useState(
-    SCHEDULE_PREFERENCES[0] || "Mañana (8:00 - 12:00)"
+    SCHEDULE_PREFERENCES[0] || "Mañana (9:00 - 13:00)"
   );
   const [showNotes, setShowNotes] = useState(false);
   const [notes, setNotes] = useState("");

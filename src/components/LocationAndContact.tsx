@@ -19,50 +19,63 @@ function getBoliviaScheduleStatus(): ClinicScheduleStatus {
       timeZone: "America/La_Paz",
     });
     const boliviaDate = new Date(boliviaDateStr);
-    const day = boliviaDate.getDay(); // 0: Domingo, 1: Lunes, ..., 6: Sábado
+    const day = boliviaDate.getDay(); // 0: Domingo, 1: Lunes, ..., 5: Viernes, 6: Sábado
     const hour = boliviaDate.getHours();
     const minute = boliviaDate.getMinutes();
     const timeInMinutes = hour * 60 + minute;
 
-    const OPEN_MINUTES = 8 * 60; // 8:00 AM
-    const CLOSE_MINUTES = 15 * 60; // 3:00 PM (15:00)
+    const OPEN_MINUTES = 9 * 60; // 9:00 AM
+    const CLOSE_WEEKDAY_MINUTES = 17 * 60; // 5:00 PM (17:00)
+    const CLOSE_SATURDAY_MINUTES = 12 * 60; // 12:00 PM (12:00)
 
-    // Lunes (1) a Sábado (6)
-    const isWorkDay = day >= 1 && day <= 6;
-    const isWithinHours =
-      timeInMinutes >= OPEN_MINUTES && timeInMinutes < CLOSE_MINUTES;
+    const isWeekday = day >= 1 && day <= 5;
+    const isSaturday = day === 6;
 
-    if (isWorkDay && isWithinHours) {
-      return {
-        isOpen: true,
-        statusText: "Abierto ahora",
-      };
-    }
-
-    if (day === 0) {
-      return {
-        isOpen: false,
-        statusText: "Cerrado · Abre el lunes a las 8:00 AM",
-      };
-    }
-
-    if (isWorkDay && timeInMinutes < OPEN_MINUTES) {
+    if (isWeekday) {
+      if (timeInMinutes >= OPEN_MINUTES && timeInMinutes < CLOSE_WEEKDAY_MINUTES) {
+        return {
+          isOpen: true,
+          statusText: "Abierto ahora",
+        };
+      }
+      if (timeInMinutes < OPEN_MINUTES) {
+        return {
+          isOpen: false,
+          statusText: "Abre hoy a las 9:00 AM",
+        };
+      }
       return {
         isOpen: false,
-        statusText: "Cerrado · Abre a las 8:00 AM",
+        statusText:
+          day === 5
+            ? "Abre el sábado a las 9:00 AM"
+            : "Abre mañana a las 9:00 AM",
       };
     }
 
-    if (day === 6 && timeInMinutes >= CLOSE_MINUTES) {
+    if (isSaturday) {
+      if (timeInMinutes >= OPEN_MINUTES && timeInMinutes < CLOSE_SATURDAY_MINUTES) {
+        return {
+          isOpen: true,
+          statusText: "Abierto ahora",
+        };
+      }
+      if (timeInMinutes < OPEN_MINUTES) {
+        return {
+          isOpen: false,
+          statusText: "Abre hoy a las 9:00 AM",
+        };
+      }
       return {
         isOpen: false,
-        statusText: "Cerrado · Abre el lunes a las 8:00 AM",
+        statusText: "Abre el lunes a las 9:00 AM",
       };
     }
 
+    // Domingo (day === 0)
     return {
       isOpen: false,
-      statusText: "Cerrado · Abre mañana a las 8:00 AM",
+      statusText: "Abre mañana a las 9:00 AM",
     };
   } catch {
     return {
@@ -195,14 +208,24 @@ export function LocationAndContact({ onOpenBooking }: LocationAndContactProps) {
 
               {/* Filas de Horario Desglosado con Alto Contraste */}
               <div className="space-y-2.5 text-xs">
-                {/* Lunes a Sábado */}
+                {/* Lunes a Viernes */}
                 <div className="flex items-center justify-between gap-2">
                   <div>
-                    <span className="font-semibold text-slate-800 block">Lunes a Sábado</span>
+                    <span className="font-semibold text-slate-800 block">Lunes a Viernes</span>
                     <span className="text-[10px] text-[#007485] font-medium block">Horario continuo</span>
                   </div>
                   <span className="text-[11px] font-bold text-[#007485] bg-[#ebf4f7] px-2.5 py-1 rounded-lg border border-[#009bb3]/20 shrink-0 tracking-tight">
-                    8:00 AM – 3:00 PM
+                    9:00 AM – 5:00 PM
+                  </span>
+                </div>
+
+                {/* Sábado */}
+                <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100/80">
+                  <div>
+                    <span className="font-semibold text-slate-800 block">Sábados</span>
+                  </div>
+                  <span className="text-[11px] font-bold text-[#007485] bg-[#ebf4f7] px-2.5 py-1 rounded-lg border border-[#009bb3]/20 shrink-0 tracking-tight">
+                    9:00 AM – 12:00 PM
                   </span>
                 </div>
 
