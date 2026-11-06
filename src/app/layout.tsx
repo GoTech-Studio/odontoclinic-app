@@ -70,7 +70,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-white text-slate-800 font-sans selection:bg-teal-100 selection:text-teal-900 flex flex-col">
+      <body className="min-h-screen text-slate-800 font-sans selection:bg-teal-100 selection:text-teal-900 flex flex-col">
         {children}
       </body>
     </html>

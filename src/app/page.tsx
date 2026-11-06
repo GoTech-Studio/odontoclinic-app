@@ -11,6 +11,7 @@ import { FaqSection } from "@/components/FaqSection";
 import { Footer } from "@/components/Footer";
 import { AppointmentModal } from "@/components/AppointmentModal";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { Reveal } from "@/components/Reveal";
 
 export default function Home() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -35,22 +36,34 @@ export default function Home() {
       <Navbar onOpenBooking={handleOpenBooking} />
 
       {/* 2. Hero: "Tu sonrisa, en manos expertas" + 4 Badges */}
-      <Hero onOpenBooking={handleOpenBooking} />
+      <Reveal className="reveal-hero">
+        <Hero onOpenBooking={handleOpenBooking} />
+      </Reveal>
 
       {/* 3. Servicios: "Cuidamos cada detalle de tu sonrisa" (Layout dividido con 6 tarjetas 3x2) */}
-      <ServicesSection onOpenBooking={handleOpenBooking} />
+      <Reveal className="reveal-stagger">
+        <ServicesSection onOpenBooking={handleOpenBooking} />
+      </Reveal>
 
       {/* 4. Conoce a la doctora: Dra. Pamela Claros (3 columnas) */}
-      <DoctorProfile onOpenBooking={handleOpenBooking} />
+      <Reveal className="reveal-stagger">
+        <DoctorProfile onOpenBooking={handleOpenBooking} />
+      </Reveal>
 
       {/* 5. La Clínica: "Un espacio pensado para tu comodidad" + 3 fotos en fila */}
-      <ClinicSection />
+      <Reveal className="reveal-stagger">
+        <ClinicSection />
+      </Reveal>
 
       {/* 6. Ubicación & Contacto: Mapa con pin "Camiri, Bolivia" + Datos + Contacto */}
-      <LocationAndContact onOpenBooking={handleOpenBooking} />
+      <Reveal className="reveal-stagger">
+        <LocationAndContact onOpenBooking={handleOpenBooking} />
+      </Reveal>
 
       {/* 7. Preguntas Frecuentes: "¿Tienes dudas?" + Acordeón 3 preguntas */}
-      <FaqSection />
+      <Reveal className="reveal-stagger">
+        <FaqSection />
+      </Reveal>
 
       {/* 8. Footer: Barra inferior azul marino oscuro con lema y botón de cita */}
       <Footer onOpenBooking={handleOpenBooking} />

@@ -6,6 +6,7 @@ import { GoogleReviewsResponse } from "@/app/api/google-reviews/route";
 interface GoogleReviewBadgeProps {
   variant?: "card" | "pill";
   className?: string;
+  mapsUrl?: string;
 }
 
 const DEFAULT_REVIEW: GoogleReviewsResponse = {
@@ -19,8 +20,31 @@ const DEFAULT_REVIEW: GoogleReviewsResponse = {
     rating: 5,
     relative_time_description: "Local Guide · Google Maps",
     text: "Recomendado. El mejor lugar en Camiri. Profesional y siempre a la hora.",
+    googleMapsUri: "https://maps.app.goo.gl/HnyTUzgeKH5B42jM8",
   },
-  google_maps_url: "https://maps.app.goo.gl/C6zx2rfVefDevf3Z9",
+  reviews: [
+    {
+      author_name: "Christopher R. Mattix",
+      author_url: "https://www.google.com/maps/contrib/114523587285738258707",
+      profile_photo_url:
+        "https://lh3.googleusercontent.com/a-/ALV-UjUJ0xzrNdK7tefsk3qVfrTYgeNSCHG2oJWCs7mWt0XMQex2GPuw=s120-c-rp-mo-ba12-br100",
+      rating: 5,
+      relative_time_description: "Local Guide · Google Maps",
+      text: "Recomendado. El mejor lugar en Camiri. Profesional y siempre a la hora.",
+      googleMapsUri: "https://maps.app.goo.gl/HnyTUzgeKH5B42jM8",
+    },
+    {
+      author_name: "Josué",
+      author_url: "https://maps.app.goo.gl/rhr5QngmSn4xwNe97",
+      profile_photo_url:
+        "https://lh3.googleusercontent.com/a-/ALV-UjVs166wJ6ygYPsIGMiZOHS8RZ6a_8C_eAso5bgoK0eygH1IZhys=w72-h72-p-rp-mo-ba12-br100",
+      rating: 5,
+      relative_time_description: "Local Guide · 14 reseñas · 53 fotos",
+      text: "Muy contento con mi tratamiento de ortodoncia. Atención cercana y excelentes resultados.",
+      googleMapsUri: "https://maps.app.goo.gl/rhr5QngmSn4xwNe97",
+    },
+  ],
+  google_maps_url: "https://maps.app.goo.gl/HnyTUzgeKH5B42jM8",
   is_live: true,
 };
 
@@ -40,34 +64,32 @@ function getSafeExternalUrl(rawUrl: string | undefined, fallback: string): strin
 export function GoogleReviewBadge({
   variant = "card",
   className = "",
+  mapsUrl,
 }: GoogleReviewBadgeProps) {
-  const [data, setData] = useState<GoogleReviewsResponse>(DEFAULT_REVIEW);
+  const [data] = useState<GoogleReviewsResponse>(DEFAULT_REVIEW);
   const [avatarError, setAvatarError] = useState(false);
+  const [activeReviewIndex, setActiveReviewIndex] = useState(0);
 
   useEffect(() => {
-    let isMounted = true;
-    fetch("/api/google-reviews")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((json: GoogleReviewsResponse | null) => {
-        if (isMounted && json && json.featured_review) {
-          setData(json);
-        }
-      })
-      .catch(() => {
-        // Usa el fallback por defecto con la reseña real
-      });
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+    if (variant !== "card" || (data.reviews?.length ?? 0) < 2) return;
+
+    const timer = window.setInterval(() => {
+      setActiveReviewIndex((current) => current + 1);
+      setAvatarError(false);
+    }, 6000);
+
+    return () => window.clearInterval(timer);
+  }, [variant, data.reviews?.length]);
 
   const { featured_review, google_maps_url, rating } = data;
+  const reviews = data.reviews?.length ? data.reviews : [featured_review];
+  const activeReview = reviews[activeReviewIndex % reviews.length];
   const safeMapsUrl = getSafeExternalUrl(
-    google_maps_url,
+    mapsUrl || activeReview.googleMapsUri || google_maps_url,
     DEFAULT_REVIEW.google_maps_url
   );
   const safeAvatarUrl = getSafeExternalUrl(
-    featured_review.profile_photo_url,
+    activeReview.profile_photo_url,
     ""
   );
   const safeRating =
@@ -82,7 +104,7 @@ export function GoogleReviewBadge({
         href={safeMapsUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className={`group inline-flex items-center gap-2 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-xs border border-slate-200/80 hover:border-[#009bb3]/50 hover:shadow-md transition-all duration-200 active:scale-95 ${className}`}
+        className={`group inline-flex items-center gap-2.5 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-full shadow-sm border border-slate-200/80 hover:border-[#009bb3]/50 hover:shadow-md transition-all duration-200 active:scale-95 ${className}`}
       >
         {/* Official Google G Logo SVG */}
         <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
@@ -109,7 +131,7 @@ export function GoogleReviewBadge({
           {[...Array(5)].map((_, i) => (
             <svg
               key={i}
-              className={`w-3 h-3 ${
+              className={`w-3.5 h-3.5 ${
                 i < Math.round(safeRating)
                   ? "fill-amber-400 text-amber-400"
                   : "fill-slate-200 text-slate-200"
@@ -126,14 +148,6 @@ export function GoogleReviewBadge({
           {safeRating.toFixed(1)}
         </span>
 
-        {/* Calificación Excelente sin número ficticio */}
-        <span className="text-[11px] text-slate-600 font-medium">
-          · Calificación Excelente
-        </span>
-
-        <span className="text-[#007485] font-semibold text-xs group-hover:translate-x-0.5 transition-transform">
-          ↗
-        </span>
       </a>
     );
   }
@@ -141,13 +155,14 @@ export function GoogleReviewBadge({
   // Renderizado variante "card" (Tarjeta completa para desktop o sección de testimonios)
   return (
     <a
+      key={activeReviewIndex % reviews.length}
       href={safeMapsUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group block bg-white/95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl shadow-xl shadow-slate-900/10 border border-white/90 hover:border-[#009bb3]/40 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl text-left pointer-events-auto max-w-[320px] sm:max-w-[340px] ${className}`}
+      className={`group block ${reviews.length > 1 ? "animate-review-fade" : ""} bg-white/95 backdrop-blur-md p-3.5 sm:p-4 lg:p-5 rounded-2xl shadow-xl shadow-slate-900/10 border border-white/90 hover:border-[#009bb3]/40 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl text-left pointer-events-auto max-w-[320px] sm:max-w-[340px] lg:max-w-[390px] xl:max-w-[420px] ${className}`}
     >
       {/* Header: Google Icon + Rating Stars + Google Label */}
-      <div className="flex items-center justify-between gap-2 mb-2">
+      <div className="flex items-center justify-between gap-2 mb-2 lg:mb-3">
         <div className="flex items-center gap-2">
           {/* Official Google G Logo SVG */}
           <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
@@ -198,28 +213,30 @@ export function GoogleReviewBadge({
       </div>
 
       {/* Real Patient Comment Text */}
-      <p className="text-xs text-slate-700 leading-snug italic line-clamp-3 mb-2.5">
-        &ldquo;{featured_review.text}&rdquo;
+      <p className="text-xs text-slate-700 leading-snug italic line-clamp-3 mb-2.5 lg:mb-4">
+        &ldquo;{activeReview.text}&rdquo;
       </p>
 
       {/* Footer: Author Name & Verified Badge */}
-      <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1.5 border-t border-slate-100">
+      <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1.5 lg:pt-2 border-t border-slate-100">
         <span className="font-semibold text-slate-800 flex items-center gap-1.5">
           {safeAvatarUrl && !avatarError ? (
             <img
               src={safeAvatarUrl}
-              alt={featured_review.author_name}
+              alt={activeReview.author_name}
               referrerPolicy="no-referrer"
               className="w-4 h-4 rounded-full object-cover shrink-0"
               onError={() => setAvatarError(true)}
             />
           ) : (
             <span className="w-4 h-4 rounded-full bg-[#009bb3]/15 text-[#007485] flex items-center justify-center font-bold text-[9px] shrink-0">
-              {(featured_review.author_name || "P").charAt(0)}
+              {(activeReview.author_name || "P").charAt(0)}
             </span>
           )}
-          <span className="truncate max-w-[130px]">{featured_review.author_name}</span>
-          <span className="text-[9px] text-amber-600 font-medium">★ Local Guide</span>
+          <span className="truncate max-w-[130px]">{activeReview.author_name}</span>
+          <span className="text-[9px] text-amber-600 font-medium">
+            ★ {activeReview.relative_time_description}
+          </span>
         </span>
 
         <span className="text-[#007485] font-medium group-hover:underline flex items-center gap-1 shrink-0">

@@ -69,17 +69,15 @@ export function AppointmentModal({
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
-      const timer = requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setIsVisible(true);
-        });
-      });
-      return () => cancelAnimationFrame(timer);
+      const timer = window.setTimeout(() => {
+        setIsVisible(true);
+      }, 20);
+      return () => window.clearTimeout(timer);
     } else {
       setIsVisible(false);
       const timer = setTimeout(() => {
         setShouldRender(false);
-      }, 260);
+      }, 400);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
@@ -165,7 +163,7 @@ export function AppointmentModal({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 transition-all duration-260 ease-out ${
+      className={`fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 transition-all duration-400 ease-out ${
         isVisible ? "opacity-100 backdrop-blur-sm" : "opacity-0 backdrop-blur-none pointer-events-none"
       }`}
       onClick={handleClose}
@@ -173,7 +171,7 @@ export function AppointmentModal({
       aria-modal="true"
     >
       <div
-        className={`relative w-full max-w-md bg-white rounded-[28px] sm:rounded-[32px] shadow-2xl border border-slate-100 overflow-hidden flex flex-col transition-all duration-260 ease-out transform ${
+        className={`relative w-full max-w-md bg-white rounded-[28px] sm:rounded-[32px] shadow-2xl border border-slate-100 overflow-hidden flex flex-col transition-all duration-400 ease-out transform ${
           isVisible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-3"
         }`}
         onClick={(e) => e.stopPropagation()}
