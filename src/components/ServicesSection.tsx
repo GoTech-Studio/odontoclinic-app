@@ -310,7 +310,7 @@ export function ServicesSection({ onOpenBooking }: ServicesSectionProps) {
                 <div className="w-9 h-9 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-3.5 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
                   {renderServiceIcon(service.icon)}
                 </div>
-                <h3 className="text-xs sm:text-[13.5px] font-semibold text-slate-800 tracking-tight transition-colors group-hover:text-[#007485] leading-tight">
+                 <h3 className="text-sm font-semibold text-slate-800 tracking-tight transition-colors group-hover:text-[#007485] leading-tight">
                   {service.title}
                 </h3>
               </div>

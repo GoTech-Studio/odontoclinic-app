@@ -16,11 +16,11 @@ export function FaqSection() {
     },
     {
       q: "¿Qué servicios ofrece la clínica?",
-      a: "Ofrecemos limpieza dental profiláctica, ortodoncia con brackets estéticos e invisibles, blanqueamiento dental láser, diseño de sonrisa, implantes dentales y odontología general integral.",
+      a: "Ofrecemos limpieza profunda, restauraciones estéticas, tratamiento de conducto, prótesis fija y removible, implantes dentales y cirugías de alta complejidad.",
     },
     {
       q: "¿Dónde está ubicada la clínica?",
-      a: "Nuestra clínica se encuentra ubicada en una zona céntrica y de fácil acceso en la ciudad de Camiri, Bolivia. Al agendar tu cita te compartimos las referencias y geolocalización exacta.",
+      a: "Estamos ubicados en la calle 24 de Septiembre, esquina con la calle Colón, en Camiri, Bolivia. Puedes orientarte directamente con el mapa embebido en esta página o tocar “Cómo llegar” para abrir la ruta en Google Maps.",
     },
   ];
 
@@ -110,4 +110,3 @@ export function FaqSection() {
     </section>
   );
 }
-

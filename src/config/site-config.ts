@@ -34,7 +34,7 @@ export const CLINIC_SERVICES: ClinicServiceItem[] = [
   },
   {
     id: "restauraciones-esteticas",
-    title: "Restauraciones esteticas",
+    title: "Restauraciones estéticas",
     icon: "whitening",
     enabled: true,
   },

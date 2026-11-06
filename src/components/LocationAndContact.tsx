@@ -154,8 +154,8 @@ export function LocationAndContact({ onOpenBooking }: LocationAndContactProps) {
               Bolivia
             </h2>
             <p className="text-slate-600 text-sm leading-relaxed">
-              Te esperamos en nuestras instalaciones. Si lo prefieres, también puedes coordinar tu
-              atención y consultas directamente por WhatsApp.
+              Estamos ubicados en la calle 24 de Septiembre, esquina con la calle Colón. Usa el
+              mapa de esta página para ubicarte fácilmente o pulsa “Cómo llegar” para abrir la ruta.
             </p>
             <div className="pt-2">
               <a
@@ -187,7 +187,7 @@ export function LocationAndContact({ onOpenBooking }: LocationAndContactProps) {
                   <div className="w-7 h-7 rounded-lg bg-[#ebf4f7] text-[#007485] flex items-center justify-center shrink-0">
                     <Clock className="w-4 h-4 stroke-[2.2]" />
                   </div>
-                  <span className="text-xs font-bold text-slate-900 tracking-tight">
+                  <span className="text-xs sm:text-sm font-bold text-slate-900 tracking-tight">
                     Horario de Atención
                   </span>
                 </div>
@@ -207,14 +207,14 @@ export function LocationAndContact({ onOpenBooking }: LocationAndContactProps) {
               </div>
 
               {/* Filas de Horario Desglosado con Alto Contraste */}
-              <div className="space-y-2.5 text-xs">
+              <div className="space-y-2.5 text-xs sm:text-sm">
                 {/* Lunes a Viernes */}
                 <div className="flex items-center justify-between gap-2">
                   <div>
                     <span className="font-semibold text-slate-800 block">Lunes a Viernes</span>
-                    <span className="text-[10px] text-[#007485] font-medium block">Horario continuo</span>
+                    <span className="text-[10px] sm:text-xs text-[#007485] font-medium block">Horario continuo</span>
                   </div>
-                  <span className="text-[11px] font-bold text-[#007485] bg-[#ebf4f7] px-2.5 py-1 rounded-lg border border-[#009bb3]/20 shrink-0 tracking-tight">
+                  <span className="text-[11px] sm:text-xs font-bold text-[#007485] bg-[#ebf4f7] px-2.5 py-1 rounded-lg border border-[#009bb3]/20 shrink-0 tracking-tight">
                     9:00 AM – 5:00 PM
                   </span>
                 </div>
@@ -224,15 +224,15 @@ export function LocationAndContact({ onOpenBooking }: LocationAndContactProps) {
                   <div>
                     <span className="font-semibold text-slate-800 block">Sábados</span>
                   </div>
-                  <span className="text-[11px] font-bold text-[#007485] bg-[#ebf4f7] px-2.5 py-1 rounded-lg border border-[#009bb3]/20 shrink-0 tracking-tight">
+                  <span className="text-[11px] sm:text-xs font-bold text-[#007485] bg-[#ebf4f7] px-2.5 py-1 rounded-lg border border-[#009bb3]/20 shrink-0 tracking-tight">
                     9:00 AM – 12:00 PM
                   </span>
                 </div>
 
                 {/* Domingo */}
                 <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100/80">
-                  <span className="text-[11px] font-medium text-slate-500">Domingos y feriados</span>
-                  <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                  <span className="text-[11px] sm:text-xs font-medium text-slate-500">Domingos y feriados</span>
+                   <span className="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
                     Cerrado
                   </span>
                 </div>
@@ -252,20 +252,20 @@ export function LocationAndContact({ onOpenBooking }: LocationAndContactProps) {
               type="button"
               className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white hover:bg-[#ebf4f7]/50 border border-slate-200/90 hover:border-[#009bb3]/50 shadow-2xs hover:shadow-sm transition-all group cursor-pointer text-left"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 flex-1 items-center gap-3">
                 <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                   <MessageCircle className="w-4 h-4 fill-emerald-600/20 stroke-[2.2]" />
                 </div>
-                <div>
-                  <span className="text-xs font-semibold text-slate-800 block group-hover:text-[#007485] transition-colors">
-                    Agendar por WhatsApp
-                  </span>
-                  <span className="text-[10px] text-slate-500 block">
-                    Respuesta rápida para consultas y citas
-                  </span>
+                <div className="min-w-0">
+                   <span className="text-xs sm:text-sm font-semibold text-slate-800 block leading-tight group-hover:text-[#007485] transition-colors">
+                     Agendar por WhatsApp
+                   </span>
+                   <span className="text-[10px] sm:text-xs text-slate-500 block leading-tight">
+                     Respuesta rápida para consultas y citas
+                   </span>
                 </div>
               </div>
-              <span className="text-slate-400 group-hover:text-[#007485] group-hover:translate-x-0.5 transition-all text-xs">
+                <span className="w-5 shrink-0 text-center text-slate-400 group-hover:text-[#007485] group-hover:translate-x-0.5 transition-all text-xs">
                 →
               </span>
             </button>
@@ -280,15 +280,18 @@ export function LocationAndContact({ onOpenBooking }: LocationAndContactProps) {
               <div className="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-[#ebf4f7] text-slate-600 group-hover:text-[#007485] flex items-center justify-center shrink-0 transition-colors">
                 <MapPin className="w-4 h-4 stroke-[2.2]" />
               </div>
-              <div className="min-w-0">
-                <span className="text-xs font-semibold text-slate-800 block truncate group-hover:text-[#007485] transition-colors">
-                  Calle 24 de Septiembre
-                </span>
-                <span className="text-[10px] text-slate-500 block truncate">
-                  Camiri, Bolivia • Ver referencias ↗
-                </span>
-              </div>
-            </a>
+               <div className="min-w-0 flex-1">
+                 <span className="text-xs sm:text-sm font-semibold text-slate-800 block leading-tight group-hover:text-[#007485] transition-colors">
+                   24 de Septiembre esquina Colón
+                 </span>
+                 <span className="text-[10px] sm:text-xs text-slate-500 block leading-tight">
+                   Camiri, Bolivia • Ver en el mapa
+                 </span>
+               </div>
+               <span className="w-5 shrink-0 text-center text-slate-400 group-hover:text-[#007485] group-hover:translate-x-0.5 transition-all text-xs">
+                 →
+               </span>
+             </a>
           </div>
         </div>
       </div>
