@@ -32,6 +32,9 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   poweredByHeader: false, // Oculta la cabecera X-Powered-By: Next.js
   images: {
+    formats: ["image/webp"],
+    qualities: [75, 85],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {
         protocol: "https",

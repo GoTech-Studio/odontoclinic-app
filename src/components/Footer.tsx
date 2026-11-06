@@ -20,7 +20,7 @@ export function Footer({ onOpenBooking }: FooterProps) {
               width={32}
               height={32}
               className="object-contain w-auto h-7 sm:h-8"
-              unoptimized
+              quality={85}
             />
             <span className="text-lg font-bold tracking-tight text-white">
               Odontoclinic
@@ -68,4 +68,3 @@ export function Footer({ onOpenBooking }: FooterProps) {
     </footer>
   );
 }
-

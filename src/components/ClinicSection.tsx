@@ -93,7 +93,7 @@ export function ClinicSection() {
                     fill
                     sizes="(max-width: 640px) 100vw, 360px"
                     className="object-cover"
-                    unoptimized
+                     quality={85}
                   />
                   <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-slate-900/70 via-slate-900/25 to-transparent pointer-events-none">
                     <span className="text-sm font-semibold text-white drop-shadow-sm">
@@ -153,7 +153,7 @@ export function ClinicSection() {
                   fill
                   sizes="(max-width: 640px) 100vw, 300px"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  unoptimized
+                   quality={85}
                 />
                 <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-slate-900/60 via-slate-900/20 to-transparent pointer-events-none">
                   <span className="text-xs font-semibold text-white drop-shadow-sm">

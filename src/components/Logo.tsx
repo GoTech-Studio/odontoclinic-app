@@ -44,8 +44,7 @@ export function Logo({
           width={iconPixelSizes[size]}
           height={iconPixelSizes[size]}
           className="object-contain w-auto h-7 sm:h-8"
-          priority
-          unoptimized
+          quality={85}
         />
       </div>
 
@@ -62,4 +61,3 @@ export function Logo({
     </div>
   );
 }
-
