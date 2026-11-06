@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useSiteImages } from "@/lib/hooks/use-site-images";
 import { GoogleReviewBadge } from "./GoogleReviewBadge";
 
@@ -29,9 +30,13 @@ export function Hero({ onOpenBooking }: HeroProps) {
 
       {/* Desktop Hero Image - Anchored harmoniously on desktop & ultrawide screens */}
       <div className="hidden lg:block absolute top-0 right-0 2xl:right-[max(0px,calc((100vw-1400px)/2))] w-1/2 lg:w-[46%] xl:w-[48%] 2xl:w-[680px] h-full overflow-hidden pointer-events-none z-0">
-        <img
+        <Image
           alt={heroImage.alt}
-          className="hero-image-fade w-full h-full object-cover object-[80%_top] select-none"
+          fill
+          className="hero-image-fade w-full h-full object-cover object-[58%_top] select-none"
+          fetchPriority="high"
+          quality={85}
+          sizes="(max-width: 1024px) 0px, (max-width: 1280px) 48vw, 680px"
           src={heroImage.src}
         />
 
@@ -85,9 +90,13 @@ export function Hero({ onOpenBooking }: HeroProps) {
             {/* Mobile Image (Limpia, nítida y sin elementos encimados) */}
             <div className="block lg:hidden relative my-5">
               <div className="relative overflow-hidden rounded-3xl shadow-sm border border-slate-200/60 aspect-[4/3] sm:aspect-[16/10]">
-                <img
+                <Image
                   alt={heroImage.alt}
-                  className="w-full h-full object-cover object-[75%_18%] select-none"
+                  fill
+                  className="w-full h-full object-cover object-[55%_18%] select-none"
+                  fetchPriority="high"
+                  quality={85}
+                  sizes="(max-width: 640px) calc(100vw - 2rem), 640px"
                   src={heroImage.src}
                 />
               </div>

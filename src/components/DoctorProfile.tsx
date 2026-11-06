@@ -26,8 +26,8 @@ export function DoctorProfile({ onOpenBooking }: DoctorProfileProps) {
                 width={452}
                 height={516}
                 className="w-full h-[380px] sm:h-[450px] object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                priority
-                unoptimized
+                 preload
+                 quality={85}
               />
               <div className="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/70 shadow-sm flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-800">
