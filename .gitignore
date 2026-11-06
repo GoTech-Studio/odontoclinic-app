@@ -17,16 +17,12 @@
 /.next/
 /out/
 /build/
-/.open-next/
-/.wrangler/
 
 # environment files (STRICT: all variants ignored, only .env.example allowed)
 .env
 .env.*
 .env*.local
 !.env.example
-.dev.vars
-.dev.vars.*
 
 # vercel
 .vercel
