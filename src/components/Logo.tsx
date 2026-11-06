@@ -32,7 +32,7 @@ export function Logo({
     lg: "text-2xl font-bold",
   };
 
-  const logoSrc = isWhite ? "/images/logo-footer.png" : "/images/logo-navbar.png";
+  const logoSrc = isWhite ? "/images/logo-footer.svg" : "/images/logo-navbar.svg";
 
   return (
     <div className={`flex items-center gap-2.5 select-none ${className}`}>

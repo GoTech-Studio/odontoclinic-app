@@ -193,7 +193,7 @@ export function AppointmentModal({
           {/* Clinic Brand Badge */}
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/90 shadow-2xs border border-slate-200/60 mb-2">
             <Image
-              src="/images/logo-navbar.png"
+              src="/images/logo-navbar.svg"
               alt="Odontoclinic"
               width={16}
               height={16}
