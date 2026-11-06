@@ -7,12 +7,14 @@ export interface GoogleReviewItem {
   rating: number;
   relative_time_description: string;
   text: string;
+  googleMapsUri?: string;
 }
 
 export interface GoogleReviewsResponse {
   rating: number;
   total_reviews: number;
   featured_review: GoogleReviewItem;
+  reviews?: GoogleReviewItem[];
   google_maps_url: string;
   is_live: boolean;
 }
@@ -29,8 +31,31 @@ const FALLBACK_DATA: GoogleReviewsResponse = {
     rating: 5,
     relative_time_description: "Local Guide · Google Maps",
     text: "Recomendado. El mejor lugar en Camiri. Profesional y siempre a la hora.",
+    googleMapsUri: "https://maps.app.goo.gl/HnyTUzgeKH5B42jM8",
   },
-  google_maps_url: "https://maps.app.goo.gl/C6zx2rfVefDevf3Z9",
+  reviews: [
+    {
+      author_name: "Christopher R. Mattix",
+      author_url: "https://www.google.com/maps/contrib/114523587285738258707",
+      profile_photo_url:
+        "https://lh3.googleusercontent.com/a-/ALV-UjUJ0xzrNdK7tefsk3qVfrTYgeNSCHG2oJWCs7mWt0XMQex2GPuw=s120-c-rp-mo-ba12-br100",
+      rating: 5,
+      relative_time_description: "Local Guide · Google Maps",
+      text: "Recomendado. El mejor lugar en Camiri. Profesional y siempre a la hora.",
+      googleMapsUri: "https://maps.app.goo.gl/HnyTUzgeKH5B42jM8",
+    },
+    {
+      author_name: "Josué",
+      author_url: "https://maps.app.goo.gl/rhr5QngmSn4xwNe97",
+      profile_photo_url:
+        "https://lh3.googleusercontent.com/a-/ALV-UjVs166wJ6ygYPsIGMiZOHS8RZ6a_8C_eAso5bgoK0eygH1IZhys=w72-h72-p-rp-mo-ba12-br100",
+      rating: 5,
+      relative_time_description: "Local Guide · 14 reseñas · 53 fotos",
+      text: "Muy contento con mi tratamiento de ortodoncia. Atención cercana y excelentes resultados.",
+      googleMapsUri: "https://maps.app.goo.gl/rhr5QngmSn4xwNe97",
+    },
+  ],
+  google_maps_url: "https://maps.app.goo.gl/HnyTUzgeKH5B42jM8",
   is_live: false,
 };
 
@@ -93,16 +118,13 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const params = new URLSearchParams({
-      place_id: placeId,
-      fields: "name,rating,user_ratings_total,reviews,url",
-      language: "es",
-      key: apiKey,
-    });
-
-    const url = `https://maps.googleapis.com/maps/api/place/details/json?${params.toString()}`;
+    const url = `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}`;
 
     const res = await fetch(url, {
+      headers: {
+        "X-Goog-Api-Key": apiKey,
+        "X-Goog-FieldMask": "rating,userRatingCount,reviews,googleMapsUri",
+      },
       next: { revalidate: 86400 }, // Caché de 24 horas para no agotar la cuota de Google
       signal: AbortSignal.timeout(5000), // Timeout estricto de 5s contra bloqueos upstream
     });
@@ -112,31 +134,41 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await res.json();
-    const result = data.result;
+    const reviews = Array.isArray(data.reviews) ? data.reviews : [];
 
-    if (!result || !Array.isArray(result.reviews) || result.reviews.length === 0) {
+    if (reviews.length === 0) {
       return NextResponse.json(FALLBACK_DATA, { headers: CACHE_HEADERS });
     }
 
     // Filtrar reseñas con texto y 5 o 4 estrellas
-    const positiveReviews = result.reviews.filter(
-      (r: GoogleReviewItem) => typeof r.text === "string" && r.text.length > 0 && r.rating >= 4
+    const positiveReviews = reviews.filter(
+      (r: { text?: { text?: string }; rating?: number }) =>
+        typeof r.text?.text === "string" && r.text.text.length > 0 && (r.rating || 0) >= 4
     );
-    const featured = positiveReviews[0] || result.reviews[0];
+    const reviewsToExpose = positiveReviews.length > 0 ? positiveReviews : [reviews[0]];
+    const normalizedReviews = reviewsToExpose.map((review: {
+      authorAttribution?: { displayName?: string; uri?: string; photoUri?: string };
+      rating?: number;
+      relativePublishTimeDescription?: string;
+      text?: { text?: string };
+      googleMapsUri?: string;
+    }) => ({
+      author_name: String(review.authorAttribution?.displayName || "Paciente Verificado").slice(0, 80),
+      author_url: sanitizeHttpsUrl(review.authorAttribution?.uri, FALLBACK_DATA.google_maps_url),
+      profile_photo_url: sanitizeHttpsUrl(review.authorAttribution?.photoUri, ""),
+      rating: typeof review.rating === "number" ? review.rating : 5,
+      relative_time_description: String(review.relativePublishTimeDescription || "Google Maps").slice(0, 60),
+      text: String(review.text?.text || "").slice(0, 400),
+      googleMapsUri: sanitizeHttpsUrl(review.googleMapsUri, FALLBACK_DATA.google_maps_url),
+    }));
 
     return NextResponse.json(
       {
-        rating: typeof result.rating === "number" ? Math.min(Math.max(result.rating, 1), 5) : 5.0,
-        total_reviews: typeof result.user_ratings_total === "number" ? result.user_ratings_total : 20,
-        featured_review: {
-          author_name: String(featured.author_name || "Paciente Verificado").slice(0, 80),
-          author_url: sanitizeHttpsUrl(featured.author_url, FALLBACK_DATA.google_maps_url),
-          profile_photo_url: sanitizeHttpsUrl(featured.profile_photo_url, ""),
-          rating: typeof featured.rating === "number" ? featured.rating : 5,
-          relative_time_description: String(featured.relative_time_description || "Google Maps").slice(0, 60),
-          text: String(featured.text || "").slice(0, 400),
-        },
-        google_maps_url: sanitizeHttpsUrl(result.url, "https://maps.app.goo.gl/woSVLJSsF8kS31Za7"),
+        rating: typeof data.rating === "number" ? Math.min(Math.max(data.rating, 1), 5) : 5.0,
+        total_reviews: typeof data.userRatingCount === "number" ? data.userRatingCount : 20,
+        featured_review: normalizedReviews[0],
+        reviews: normalizedReviews,
+        google_maps_url: sanitizeHttpsUrl(data.googleMapsUri, "https://maps.app.goo.gl/woSVLJSsF8kS31Za7"),
         is_live: true,
       },
       { headers: CACHE_HEADERS }

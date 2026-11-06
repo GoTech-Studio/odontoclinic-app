@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Logo } from "./Logo";
 import { Menu, X } from "lucide-react";
 import { NAV_SECTIONS } from "@/config/site-config";
@@ -11,12 +11,53 @@ interface NavbarProps {
 
 export function Navbar({ onOpenBooking }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
   const activeSections = NAV_SECTIONS.filter((s) => s.enabled);
+
+  const handleSectionNavigation = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    if (!href.startsWith("#")) return;
+
+    const target = document.querySelector(href);
+    if (!target) return;
+
+    event.preventDefault();
+    setMobileMenuOpen(false);
+
+    window.history.replaceState(null, "", href);
+
+    if (href === "#inicio") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    // Freeze reveal transforms while measuring so the target cannot move
+    // underneath the sticky navbar during the smooth scroll.
+    const revealWrapper = target.closest(".reveal");
+    revealWrapper?.classList.add("reveal-visible", "reveal-navigation-target");
+    target.classList.add("reveal-navigation-target");
+
+    window.requestAnimationFrame(() => {
+      const headerHeight = headerRef.current?.getBoundingClientRect().height ?? 0;
+      const targetTop =
+        target.getBoundingClientRect().top + window.scrollY - headerHeight;
+
+      window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+
+      window.setTimeout(() => {
+        revealWrapper?.classList.remove("reveal-navigation-target");
+        target.classList.remove("reveal-navigation-target");
+      }, 900);
+    });
+  };
 
   return (
     <>
       <header
-        className={`relative z-40 bg-white shadow-sm border-b border-slate-100/70 transition-all duration-300 ${
+        ref={headerRef}
+        className={`navbar-entry sticky top-0 z-40 bg-white shadow-none md:shadow-sm border-b-0 lg:border-b border-slate-100/70 transition-all duration-300 ${
           mobileMenuOpen ? "rounded-b-none" : "rounded-b-[28px] sm:rounded-b-[36px]"
         }`}
       >
@@ -35,6 +76,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
                   idx === 0 ? "text-slate-900 font-semibold" : ""
                 }`}
                 href={item.href}
+                onClick={(event) => handleSectionNavigation(event, item.href)}
               >
                 {item.label}
               </a>
@@ -83,7 +125,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
 
         {/* Menú móvil flotante superpuesto (no desplaza el hero) */}
         <div
-          className={`md:hidden absolute top-full left-0 right-0 z-40 bg-white/98 backdrop-blur-md rounded-b-[28px] shadow-2xl shadow-slate-900/15 border-b border-slate-200/80 transition-all duration-300 ease-in-out origin-top overflow-hidden ${
+          className={`md:hidden absolute top-full -mt-px left-0 right-0 z-40 bg-white rounded-b-[28px] shadow-2xl shadow-slate-900/15 transition-all duration-300 ease-in-out origin-top overflow-hidden ${
             mobileMenuOpen
               ? "opacity-100 translate-y-0 pointer-events-auto max-h-[500px]"
               : "opacity-0 -translate-y-3 pointer-events-none max-h-0"
@@ -94,7 +136,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
               {activeSections.map((item) => (
                 <a
                   key={item.id}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(event) => handleSectionNavigation(event, item.href)}
                   href={item.href}
                   className="flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-medium text-slate-700 hover:text-[#009bb3] hover:bg-[#ebf4f7]/70 active:bg-[#ebf4f7] transition-all"
                 >
@@ -129,7 +171,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
       <div
         onClick={() => setMobileMenuOpen(false)}
         aria-hidden="true"
-        className={`fixed inset-0 top-18 sm:top-20 bg-slate-900/30 backdrop-blur-[2px] z-30 md:hidden transition-opacity duration-300 ${
+        className={`fixed inset-0 top-18 sm:top-20 bg-slate-900/30 backdrop-blur-sm z-30 md:hidden transition-opacity duration-300 ${
           mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       />
