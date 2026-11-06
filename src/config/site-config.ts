@@ -27,39 +27,39 @@ export const NAV_SECTIONS: NavSectionItem[] = [
  */
 export const CLINIC_SERVICES: ClinicServiceItem[] = [
   {
-    id: "limpieza-dental",
-    title: "Limpieza dental",
+    id: "limpieza-profunda",
+    title: "Limpieza profunda",
     icon: "cleaning",
     enabled: true,
   },
   {
-    id: "ortodoncia",
-    title: "Ortodoncia",
-    icon: "orthodontics",
-    enabled: true,
-  },
-  {
-    id: "blanqueamiento",
-    title: "Blanqueamiento",
+    id: "restauraciones-esteticas",
+    title: "Restauraciones esteticas",
     icon: "whitening",
     enabled: true,
   },
   {
-    id: "diseno-de-sonrisa",
-    title: "Diseño de sonrisa",
-    icon: "smile_design",
+    id: "tratamiento-de-conducto",
+    title: "Tratamiento de conducto",
+    icon: "root_canal",
     enabled: true,
   },
   {
-    id: "implantes",
-    title: "Implantes",
+    id: "protesis-fija-y-removible",
+    title: "Prótesis fija y removible",
+    icon: "orthodontics",
+    enabled: true,
+  },
+  {
+    id: "implantes-dentales",
+    title: "Implantes dentales",
     icon: "implants",
     enabled: true,
   },
   {
-    id: "odontologia-general",
-    title: "Odontología general",
-    icon: "general",
+    id: "cirugias-alta-complejidad",
+    title: "Cirugías de alta complejidad",
+    icon: "surgery",
     enabled: true,
   },
 ];
@@ -74,9 +74,9 @@ export function getAllowedServiceNames(): string[] {
 }
 
 export const SCHEDULE_PREFERENCES: string[] = [
-  "Mañana (8:00 - 12:00)",
-  "Tarde (12:00 - 15:00)",
-  "Urgencia / Sábado",
+  "Mañana (9:00 - 13:00)",
+  "Tarde (13:00 - 17:00)",
+  "Sábado (9:00 - 12:00)",
 ];
 
 /**
