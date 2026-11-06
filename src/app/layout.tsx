@@ -25,11 +25,8 @@ export const metadata: Metadata = {
     follow: false,
   },
   icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon.png", type: "image/png" },
-    ],
-    shortcut: "/favicon.ico",
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    shortcut: "/favicon.svg",
     apple: "/apple-icon.png",
   },
   openGraph: {

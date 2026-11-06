@@ -15,7 +15,7 @@ export function Footer({ onOpenBooking }: FooterProps) {
           {/* Footer Logo */}
           <div className="flex items-center gap-2.5">
             <Image
-              src="/images/logo-footer.png"
+              src="/images/logo-footer.svg"
               alt="Odontoclinic"
               width={32}
               height={32}
