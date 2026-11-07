@@ -237,3 +237,53 @@ section[id] {
     animation: none;
   }
 }
+
+/* Animaciones orgánicas tipo lámpara de lava para la pantalla de inicio de sesión */
+@keyframes lava-float-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(80px, -50px, 0) scale(1.15);
+  }
+  66% {
+    transform: translate3d(-60px, 60px, 0) scale(0.92);
+  }
+}
+
+@keyframes lava-float-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1.1);
+  }
+  33% {
+    transform: translate3d(-70px, 60px, 0) scale(0.95);
+  }
+  66% {
+    transform: translate3d(50px, -70px, 0) scale(1.22);
+  }
+}
+
+@keyframes lava-float-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(0.9);
+  }
+  50% {
+    transform: translate3d(90px, 45px, 0) scale(1.18);
+  }
+}
+
+.animate-lava-1 {
+  animation: lava-float-1 22s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+.animate-lava-2 {
+  animation: lava-float-2 28s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+.animate-lava-3 {
+  animation: lava-float-3 24s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
