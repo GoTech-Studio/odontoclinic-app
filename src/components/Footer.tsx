@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface FooterProps {
   onOpenBooking: () => void;
@@ -51,7 +52,16 @@ export function Footer({ onOpenBooking }: FooterProps) {
 
         {/* Sub-bar: Copyright & Subtle Developer Credit with symmetrical safe margins */}
         <div className="mt-6 pt-5 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-400 text-center sm:text-left sm:px-16">
-          <p className="max-w-[270px] sm:max-w-none">© 2026 Odontoclinic. Todos los derechos reservados.</p>
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3">
+            <p>© 2026 Odontoclinic. Todos los derechos reservados.</p>
+            <span className="text-slate-600">•</span>
+            <Link
+              href="/login"
+              className="text-slate-400 hover:text-[#0ed5dc] transition-colors font-medium underline underline-offset-2 decoration-slate-700 hover:decoration-[#0ed5dc]"
+            >
+              Acceso Clínico
+            </Link>
+          </div>
           <p>
             Desarrollado por{" "}
             <a
