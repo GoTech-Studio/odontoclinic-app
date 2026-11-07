@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { Lock, Mail, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
@@ -13,6 +13,13 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [configMissing, setConfigMissing] = useState(false);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured()) {
+      setConfigMissing(true);
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +27,14 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      if (!isSupabaseConfigured()) {
+        setErrorMsg(
+          "Configuración pendiente en producción: Faltan las variables de entorno NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY en Vercel."
+        );
+        setLoading(false);
+        return;
+      }
+
       const supabase = createClient();
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
@@ -29,6 +44,8 @@ export default function LoginPage() {
       if (error) {
         if (error.message.includes("Invalid login credentials")) {
           setErrorMsg("Correo o contraseña incorrectos. Verifica tus credenciales.");
+        } else if (error.message.includes("Email not confirmed")) {
+          setErrorMsg("Este correo aún no ha sido confirmado en Supabase Auth.");
         } else {
           setErrorMsg(error.message);
         }
@@ -41,8 +58,25 @@ export default function LoginPage() {
         router.refresh();
       }
     } catch (err: unknown) {
-      console.error("Error en login:", err);
-      setErrorMsg("Ocurrió un error inesperado al conectar con el servidor.");
+      console.error("Detalle del error en login:", err);
+      const msg = err instanceof Error ? err.message : "";
+      if (
+        msg.includes("variables de entorno") ||
+        msg.includes("required to create a Supabase client") ||
+        msg.includes("API key are required")
+      ) {
+        setErrorMsg(
+          "Configuración requerida en producción: Debes añadir NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY en Vercel (Project Settings > Environment Variables) y volver a desplegar."
+        );
+      } else if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) {
+        setErrorMsg(
+          "Error de conexión con Supabase. Verifica tu conexión a internet o el estado del proyecto en Supabase."
+        );
+      } else {
+        setErrorMsg(
+          msg || "Ocurrió un error inesperado al conectar con el servidor."
+        );
+      }
       setLoading(false);
     }
   };
@@ -80,11 +114,28 @@ export default function LoginPage() {
           </p>
         </div>
 
+        {/* Alerta de Configuración si faltan variables en producción */}
+        {configMissing && (
+          <div className="p-4 rounded-2xl bg-amber-500/15 border border-amber-400/30 text-amber-200 text-xs space-y-2 animate-in fade-in">
+            <div className="flex items-center gap-2 text-amber-300 font-bold">
+              <AlertCircle className="w-4 h-4 shrink-0 text-amber-400" />
+              <span>Configuración requerida en producción</span>
+            </div>
+            <p className="text-[11px] text-amber-200/90 leading-relaxed">
+              Las variables de entorno de Supabase aún no se han configurado en el panel de Vercel (Project Settings → Environment Variables):
+            </p>
+            <div className="bg-black/30 p-2.5 rounded-xl text-[10px] font-mono text-amber-100 space-y-1">
+              <p>• NEXT_PUBLIC_SUPABASE_URL</p>
+              <p>• NEXT_PUBLIC_SUPABASE_ANON_KEY (o PUBLISHABLE_KEY)</p>
+            </div>
+          </div>
+        )}
+
         {/* Tarjeta de Formulario */}
         <div className="bg-white/95 backdrop-blur-md rounded-3xl p-7 shadow-2xl border border-white/20">
           <form onSubmit={handleLogin} className="space-y-4">
             {errorMsg && (
-              <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-rose-50 border border-rose-200/80 text-rose-700 text-xs font-semibold">
+              <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-rose-50 border border-rose-200/80 text-rose-700 text-xs font-semibold animate-in fade-in">
                 <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                 <span>{errorMsg}</span>
               </div>
