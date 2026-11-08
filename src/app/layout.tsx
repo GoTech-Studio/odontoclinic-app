@@ -17,7 +17,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://odontoclinic-camiri.vercel.app"),
-  title: "Odontoclinic - Odontología Moderna en Camiri",
+  title: "OdontoClinic | Odontología Moderna en Camiri",
   description:
     "Atención odontológica cercana con una mirada moderna al cuidado de tu sonrisa en Camiri, Bolivia. Dra. Pamela Claros.",
   robots: {
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     apple: "/apple-icon.png",
   },
   openGraph: {
-    title: "Odontoclinic - Odontología Moderna en Camiri",
+    title: "OdontoClinic | Odontología Moderna en Camiri",
     description:
       "Atención odontológica cercana con una mirada moderna al cuidado de tu sonrisa. Dra. Pamela Claros.",
     type: "website",

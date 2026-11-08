@@ -1,5 +1,6 @@
 import React from "react";
 import { PanelNavbar } from "@/components/panel/PanelNavbar";
+import { PanelThemeEffect } from "@/components/panel/PanelThemeEffect";
 
 export const metadata = {
   title: "Panel Clínico | OdontoClinic",
@@ -12,9 +13,10 @@ export default function PanelLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col font-sans">
+    <div className="panel-container min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col font-sans">
+      <PanelThemeEffect />
       <PanelNavbar />
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-7 sm:pt-9 pb-8 sm:pb-12">
         {children}
       </main>
     </div>

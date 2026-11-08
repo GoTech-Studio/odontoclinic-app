@@ -14,7 +14,6 @@ import {
   X,
   Stethoscope,
   LogOut,
-  UserCheck,
 } from "lucide-react";
 
 export function PanelNavbar() {
@@ -39,7 +38,6 @@ export function PanelNavbar() {
         } = await supabase.auth.getUser();
 
         if (user) {
-          // Consultar nombre del perfil si existe
           const { data: perfil } = await supabase
             .from("perfiles")
             .select("nombres, rol")
@@ -103,163 +101,242 @@ export function PanelNavbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo y Enlace principal */}
-          <div className="flex items-center gap-6">
+    <>
+      <header
+        className={`panel-navbar sticky top-0 z-40 bg-[#0a1826] shadow-md border-b border-slate-800/80 transition-all duration-300 ${
+          mobileMenuOpen ? "rounded-b-none" : "rounded-b-[28px] sm:rounded-b-[36px]"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between">
+          {/* Logo y Enlace principal con versión blanca oficial */}
+          <div className="flex items-center gap-3 sm:gap-4">
             <Link
               href="/panel/citas"
-              className="group flex items-center gap-2 transition-transform hover:opacity-95"
+              className="group flex items-center gap-2.5 transition-transform hover:opacity-95"
             >
-              <Logo size="sm" />
-              <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#009bb3] bg-[#009bb3]/10 rounded-full border border-[#009bb3]/20">
+              <Logo size="md" variant="white" />
+              <span className="hidden sm:inline-block px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#0ed5dc] bg-[#0ed5dc]/15 rounded-full border border-[#0ed5dc]/30">
                 Panel Clínico
               </span>
             </Link>
+          </div>
 
-            {/* Navegación Desktop */}
-            <nav className="hidden md:flex items-center gap-1.5">
+          {/* Navegación Desktop adaptada al tono oscuro */}
+          <nav className="hidden md:flex items-center space-x-7 text-sm font-medium text-slate-300">
+            {navLinks.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={`inline-flex items-center gap-2 transition-colors ${
+                    item.active
+                      ? "text-[#0ed5dc] font-semibold"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                >
+                  <Icon
+                    className={`w-4 h-4 shrink-0 transition-colors ${
+                      item.active ? "text-[#0ed5dc]" : "text-slate-400 group-hover:text-slate-300"
+                    }`}
+                  />
+                  <span>{item.label}</span>
+                  {item.badge && !item.active && (
+                    <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-slate-800/90 text-slate-400 font-medium border border-slate-700/60">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Lado Derecho: Acceso Sitio Web + Avatar Usuario + Menú Móvil */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <Link
+              href="/"
+              target="_blank"
+              className="hidden md:inline-flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer border border-slate-700/60"
+              title="Ver sitio web público"
+            >
+              <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-[#0ed5dc]" />
+              <span className="hidden lg:inline">Sitio Web</span>
+            </Link>
+
+            {/* Menú de Usuario Desktop / Pill de Perfil */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setUserMenuOpen((prev) => !prev)}
+                className="flex items-center gap-2.5 p-1 sm:px-3 sm:py-1.5 rounded-full hover:bg-slate-800/90 bg-slate-900/40 border border-slate-700/50 text-left transition-all cursor-pointer group"
+                aria-label="Perfil de usuario"
+              >
+                <div className="w-8 h-8 rounded-full bg-white text-[#0a1826] font-black text-xs flex items-center justify-center shadow-xs ring-2 ring-white/20 shrink-0">
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+                <div className="hidden sm:block text-left">
+                  <p className="text-xs font-bold text-white leading-tight">
+                    {saludo}, <span className="text-[#0ed5dc]">{userName}</span>
+                  </p>
+                  <p className="text-[10px] text-slate-400 font-medium leading-tight">
+                    {userRole}
+                  </p>
+                </div>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-slate-400 group-hover:text-slate-200 transition-transform hidden sm:block shrink-0 ${
+                    userMenuOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {/* Menú Dropdown de Sesión Desktop */}
+              {userMenuOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setUserMenuOpen(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#0e2135] shadow-2xl border border-slate-700/70 py-2 z-50 animate-in fade-in zoom-in-95 duration-150 text-slate-200">
+                    <div className="px-3.5 py-2 border-b border-slate-700/60">
+                      <p className="text-xs font-bold text-white">{userName}</p>
+                      <p className="text-[10px] text-slate-400">{userRole}</p>
+                    </div>
+                    <Link
+                      href="/"
+                      target="_blank"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2 px-3.5 py-2 text-xs text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Ver sitio web público</span>
+                    </Link>
+                    <div className="my-1 border-t border-slate-700/60" />
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-2 px-3.5 py-2 text-xs text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors cursor-pointer"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Cerrar Sesión</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Hamburger móvil con animación adaptado al tono oscuro */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="md:hidden relative w-10 h-10 rounded-xl text-slate-200 hover:text-white hover:bg-slate-800 active:bg-slate-700 transition-colors flex items-center justify-center cursor-pointer select-none"
+              aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-expanded={mobileMenuOpen}
+            >
+              <span
+                className={`absolute transition-all duration-300 ease-in-out ${
+                  mobileMenuOpen ? "rotate-90 opacity-0 scale-75" : "rotate-0 opacity-100 scale-100"
+                }`}
+              >
+                <Menu className="w-6 h-6 stroke-[2.2]" />
+              </span>
+              <span
+                className={`absolute transition-all duration-300 ease-in-out ${
+                  mobileMenuOpen ? "rotate-0 opacity-100 scale-100" : "-rotate-90 opacity-0 scale-75"
+                }`}
+              >
+                <X className="w-6 h-6 stroke-[2.2]" />
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Menú móvil flotante superpuesto - Estilo adaptado al tono oscuro */}
+        <div
+          className={`md:hidden absolute top-full -mt-px left-0 right-0 z-40 bg-[#0a1826] rounded-b-[28px] shadow-2xl shadow-black/50 border-t border-slate-800/80 transition-all duration-300 ease-in-out origin-top overflow-hidden text-slate-200 ${
+            mobileMenuOpen
+              ? "opacity-100 translate-y-0 pointer-events-auto max-h-[500px]"
+              : "opacity-0 -translate-y-3 pointer-events-none max-h-0"
+          }`}
+        >
+          <div className="px-5 pt-3 pb-6 space-y-1 divide-y divide-slate-800/80">
+            {/* Tarjeta de usuario */}
+            <div className="pb-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-white text-[#0a1826] font-black text-xs flex items-center justify-center shadow-xs ring-2 ring-white/20 shrink-0">
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white leading-tight">
+                    {saludo}, <span className="text-[#0ed5dc]">{userName}</span>
+                  </p>
+                  <p className="text-[10px] text-slate-400 font-medium leading-tight">{userRole}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-rose-400 hover:bg-rose-500/10 transition-colors border border-rose-500/30 cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Salir</span>
+              </button>
+            </div>
+
+            {/* Enlaces de navegación */}
+            <div className="space-y-1 py-3">
               {navLinks.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.label}
                     href={item.href}
-                    className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 ${
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-medium transition-all ${
                       item.active
-                        ? "bg-[#009bb3] text-white shadow-xs shadow-[#009bb3]/20"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
+                        ? "bg-[#0ed5dc]/15 text-[#0ed5dc] font-semibold border border-[#0ed5dc]/25"
+                        : "text-slate-300 hover:text-white hover:bg-slate-800/60 active:bg-slate-800"
                     }`}
                   >
-                    <Icon className="w-4 h-4 shrink-0" />
-                    <span>{item.label}</span>
-                    {item.badge && !item.active && (
-                      <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-slate-100 text-slate-500 font-medium">
+                    <div className="flex items-center gap-2.5">
+                      <Icon className={`w-4 h-4 ${item.active ? "text-[#0ed5dc]" : "text-slate-400"}`} />
+                      <span>{item.label}</span>
+                    </div>
+                    {item.badge ? (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-medium border border-slate-700/60">
                         {item.badge}
                       </span>
+                    ) : (
+                      <span className="text-slate-500 text-xs">→</span>
                     )}
                   </Link>
                 );
               })}
-            </nav>
-          </div>
-
-          {/* Lado Derecho: Saludo Dinámico & Menú de Usuario */}
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-slate-50 hover:bg-slate-100/90 border border-slate-200/80 text-left transition-all cursor-pointer group"
-              >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#009bb3] to-teal-400 text-white font-bold text-xs flex items-center justify-center shadow-xs">
-                  {userName.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-800 leading-tight">
-                    {saludo}, {userName}
-                  </p>
-                  <p className="text-[10px] text-slate-500 font-medium leading-tight">
-                    {userRole}
-                  </p>
-                </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform" />
-              </button>
-
-              {/* Menú de Sesión */}
-              {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-white shadow-xl border border-slate-200/90 py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="px-3.5 py-2 border-b border-slate-100">
-                    <p className="text-xs font-bold text-slate-800">{userName}</p>
-                    <p className="text-[10px] text-slate-500">{userRole}</p>
-                  </div>
-                  <Link
-                    href="/"
-                    target="_blank"
-                    className="flex items-center gap-2 px-3.5 py-2 text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    <span>Ver sitio web público</span>
-                  </Link>
-                  <div className="my-1 border-t border-slate-100" />
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-3.5 py-2 text-xs text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
-                    <span>Cerrar Sesión</span>
-                  </button>
-                </div>
-              )}
             </div>
 
-            {/* Botón Menú Móvil */}
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Menú Móvil */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200/80 bg-white px-4 pt-2 pb-4 space-y-1">
-          <div className="px-3 py-2 bg-slate-50 rounded-xl mb-2 flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-800">
-              {saludo}, {userName}
-            </span>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="text-xs text-rose-600 font-semibold"
-            >
-              Salir
-            </button>
-          </div>
-
-          {navLinks.map((item) => {
-            const Icon = item.icon;
-            return (
+            {/* Enlace al Sitio Web Público */}
+            <div className="pt-3">
               <Link
-                key={item.label}
-                href={item.href}
+                href="/"
+                target="_blank"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold ${
-                  item.active
-                    ? "bg-[#009bb3] text-white"
-                    : "text-slate-600 hover:bg-slate-50"
-                }`}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/40 transition-colors"
               >
-                <div className="flex items-center gap-2.5">
-                  <Icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </div>
-                {item.badge && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500 font-medium">
-                    {item.badge}
-                  </span>
-                )}
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                <span>Ver sitio web público</span>
+                <span className="text-slate-500">→</span>
               </Link>
-            );
-          })}
-          <div className="pt-2 border-t border-slate-100">
-            <Link
-              href="/"
-              target="_blank"
-              className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:text-slate-900"
-            >
-              <ExternalLink className="w-4 h-4" />
-              <span>Ver sitio web público</span>
-            </Link>
+            </div>
           </div>
         </div>
+      </header>
+
+      {/* Backdrop para cerrar al tocar afuera cuando el menú móvil está abierto */}
+      {mobileMenuOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-30 bg-slate-950/40 backdrop-blur-2xs transition-opacity animate-in fade-in duration-200"
+          onClick={() => setMobileMenuOpen(false)}
+        />
       )}
-    </header>
+    </>
   );
 }

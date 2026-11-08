@@ -14,6 +14,7 @@ html {
     scroll-padding-top: 4.5rem;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    overflow-x: clip;
   }
 
   html::-webkit-scrollbar {
@@ -22,13 +23,11 @@ html {
 
   body {
     background-color: #0a1826;
-    overscroll-behavior-y: contain;
     color: var(--foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
     overflow-x: clip;
-    overscroll-behavior-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -164,8 +163,8 @@ body {
     position: absolute;
     left: 0;
     right: 0;
-    top: -120px;
-    height: 120px;
+    top: -240px;
+    height: 240px;
     background-color: var(--navbar-surface);
     pointer-events: none;
     z-index: 1;
@@ -238,52 +237,234 @@ section[id] {
   }
 }
 
-/* Animaciones orgánicas tipo lámpara de lava para la pantalla de inicio de sesión */
+/* Bloqueo estricto de rebote/overscroll exclusivamente para la pantalla de inicio de sesión (/login) */
+html:has(.login-page-wrapper),
+body:has(.login-page-wrapper),
+html.login-lock,
+body.login-lock {
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  overscroll-behavior-y: none !important;
+  touch-action: none !important;
+}
+
+.login-page-wrapper {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  overscroll-behavior-y: none !important;
+  touch-action: none !important;
+}
+
+/* Animaciones luminosas y dinámicas para el fondo interactivo de /login */
 @keyframes lava-float-1 {
   0%, 100% {
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
   }
   33% {
-    transform: translate3d(80px, -50px, 0) scale(1.15);
+    transform: translate3d(50px, -40px, 0) scale(1.18) rotate(15deg);
   }
   66% {
-    transform: translate3d(-60px, 60px, 0) scale(0.92);
+    transform: translate3d(-40px, 35px, 0) scale(0.92) rotate(-10deg);
   }
 }
 
 @keyframes lava-float-2 {
   0%, 100% {
-    transform: translate3d(0, 0, 0) scale(1.1);
+    transform: translate3d(0, 0, 0) scale(1.05) rotate(0deg);
   }
   33% {
-    transform: translate3d(-70px, 60px, 0) scale(0.95);
+    transform: translate3d(-45px, 45px, 0) scale(0.88) rotate(-12deg);
   }
   66% {
-    transform: translate3d(50px, -70px, 0) scale(1.22);
+    transform: translate3d(40px, -50px, 0) scale(1.2) rotate(18deg);
   }
 }
 
 @keyframes lava-float-3 {
   0%, 100% {
-    transform: translate3d(0, 0, 0) scale(0.9);
+    transform: translate3d(0, 0, 0) scale(0.95);
   }
   50% {
-    transform: translate3d(90px, 45px, 0) scale(1.18);
+    transform: translate3d(60px, 35px, 0) scale(1.22);
+  }
+}
+
+@keyframes lava-float-4 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate3d(-35px, -30px, 0) scale(1.15);
+    opacity: 1;
   }
 }
 
 .animate-lava-1 {
-  animation: lava-float-1 22s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: lava-float-1 11s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
   will-change: transform;
 }
 
 .animate-lava-2 {
-  animation: lava-float-2 28s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: lava-float-2 13s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
   will-change: transform;
 }
 
 .animate-lava-3 {
-  animation: lava-float-3 24s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: lava-float-3 10s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
   will-change: transform;
 }
+
+.animate-lava-4 {
+  animation: lava-float-4 8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  will-change: transform;
+}
+
+@keyframes sparkle-pulse {
+  0%, 100% {
+    transform: scale(0.7);
+    opacity: 0.25;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.85;
+  }
+}
+
+.animate-sparkle {
+  animation: sparkle-pulse 3.5s ease-in-out infinite;
+}
+
+/* =========================================================================
+   Panel Clínico: Overscroll Blanco y Animaciones Suaves Estilo Landing
+   ========================================================================= */
+html:has(.panel-container),
+body:has(.panel-container) {
+  background-color: #f8fafc !important;
+}
+
+@media (max-width: 1023px) {
+  .panel-navbar::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -240px;
+    height: 240px;
+    background-color: #0a1826;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+@keyframes panel-card-entry {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes panel-fade-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.panel-animate-entry {
+  animation: panel-card-entry 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.panel-animate-scale {
+  animation: panel-fade-scale 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.panel-card-hover {
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 200ms ease;
+}
+
+.panel-card-hover:hover {
+  transform: translateY(-2px);
+}
+
+/* Transiciones direccionales al navegar entre fechas */
+@keyframes date-slide-from-right {
+  from {
+    opacity: 0;
+    transform: translate3d(24px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes date-slide-from-left {
+  from {
+    opacity: 0;
+    transform: translate3d(-24px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes board-fade-in {
+  from {
+    opacity: 0.35;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-date-next {
+  animation: date-slide-from-right 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-date-prev {
+  animation: date-slide-from-left 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-board-transition {
+  animation: board-fade-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Animación suave de aparición al terminar el skeleton de carga */
+@keyframes content-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-content-reveal {
+  animation: content-reveal 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+
 

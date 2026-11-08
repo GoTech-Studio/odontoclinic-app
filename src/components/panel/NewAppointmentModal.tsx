@@ -3,17 +3,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   X,
-  Calendar,
   Clock,
   User,
   Phone,
   Check,
   AlertCircle,
   AlertTriangle,
-  Search,
-  CheckCircle2,
   CalendarDays,
-  Sparkles,
+  FileText,
 } from "lucide-react";
 import { sanitizeAppointmentPhone } from "@/lib/services/appointment-service";
 import { CLINIC_SERVICES, EXTRA_BOOKING_OPTIONS } from "@/config/site-config";
@@ -66,33 +63,26 @@ export function NewAppointmentModal({
   selectedDate: initialDate,
   onSaveAppointment,
 }: NewAppointmentModalProps) {
-  // Fecha libre de la cita (permite agendar para cualquier día futuro por WhatsApp)
   const [fechaCita, setFechaCita] = useState(initialDate);
-
-  // Datos del paciente
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [sugerenciasPacientes, setSugerenciasPacientes] = useState<Paciente[]>([]);
   const [mostrandoSugerencias, setMostrandoSugerencias] = useState(false);
 
-  // Detalle del servicio y horario
   const [procedimiento, setProcedimiento] = useState(PROCEDIMIENTOS_LANDING[0].nombre);
   const [horaInicio, setHoraInicio] = useState("09:00");
   const [motivo, setMotivo] = useState("");
 
-  // Estado de solapamiento y citas ocupadas del día elegido
   const [citasDelDia, setCitasDelDia] = useState<Cita[]>([]);
   const [conflictoHorario, setConflictoHorario] = useState<{ paciente: string; hora: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Sincronizar fecha inicial al abrir
   useEffect(() => {
     if (isOpen) {
       setFechaCita(initialDate);
     }
   }, [isOpen, initialDate]);
 
-  // Cargar las citas ocupadas de la fecha seleccionada para advertir visualmente
   const recargarCitasFecha = useCallback(async (fecha: string) => {
     try {
       const citas = await getCitasPorFecha(fecha);
@@ -108,7 +98,6 @@ export function NewAppointmentModal({
     }
   }, [isOpen, fechaCita, recargarCitasFecha]);
 
-  // Búsqueda en vivo de pacientes para autocompletar
   const handleNombreChange = async (val: string) => {
     setNombre(val);
     if (val.trim().length >= 2) {
@@ -127,7 +116,6 @@ export function NewAppointmentModal({
     setMostrandoSugerencias(false);
   };
 
-  // Cálculo automático de hora de fin con matemática pura (sin new Date para compatibilidad con prerender de Next.js)
   const calcularHoraFin = (inicioStr: string, procNombre: string) => {
     const proc = PROCEDIMIENTOS_LANDING.find((p) => p.nombre === procNombre);
     const duracionMin = proc ? proc.duracion : 30;
@@ -142,7 +130,6 @@ export function NewAppointmentModal({
 
   const horaFinCalculada = calcularHoraFin(horaInicio, procedimiento);
 
-  // Verificación en vivo de solapamiento cuando cambia la hora o fecha
   useEffect(() => {
     async function chequearSolapamiento() {
       if (!fechaCita || !horaInicio) return;
@@ -156,10 +143,9 @@ export function NewAppointmentModal({
     chequearSolapamiento();
   }, [fechaCita, horaInicio, horaFinCalculada]);
 
-  // Validación de horario físico de atención
   const validarHorarioAtencion = (fechaStr: string, inicio: string) => {
     const fechaObj = new Date(fechaStr + "T00:00:00");
-    const diaSemana = fechaObj.getDay(); // 0: Dom, 1: Lun ... 6: Sáb
+    const diaSemana = fechaObj.getDay();
     const [h, m] = inicio.split(":").map(Number);
     const minutosInicio = h * 60 + m;
 
@@ -180,6 +166,21 @@ export function NewAppointmentModal({
     }
 
     return null;
+  };
+
+  const formatearFechaHeader = (fechaStr: string) => {
+    try {
+      const [y, m, d] = fechaStr.split("-").map(Number);
+      const date = new Date(y, m - 1, d);
+      const texto = date.toLocaleDateString("es-ES", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+      });
+      return texto.charAt(0).toUpperCase() + texto.slice(1);
+    } catch {
+      return fechaStr;
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -204,7 +205,7 @@ export function NewAppointmentModal({
 
     if (conflictoHorario) {
       setError(
-        `Conflicto de horario: Ya existe una cita a las ${conflictoHorario.hora} con ${conflictoHorario.paciente}. Como la doctora atiende 1 a 1, elige otro horario disponible.`
+        `Horario ocupado: ${conflictoHorario.paciente} ya tiene cita a las ${conflictoHorario.hora}.`
       );
       return;
     }
@@ -219,7 +220,6 @@ export function NewAppointmentModal({
       motivo: motivo.trim() || `Atención para ${procedimiento}`,
     });
 
-    // Reset y cerrar
     setNombre("");
     setTelefono("");
     setMotivo("");
@@ -230,64 +230,57 @@ export function NewAppointmentModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden flex flex-col my-8">
-        {/* Cabecera */}
-        <div className="px-6 py-4.5 bg-gradient-to-r from-slate-900 to-[#0a1826] text-white flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#009bb3] flex items-center justify-center shadow-xs">
-              <Calendar className="w-4 h-4 text-white" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-white leading-tight">
-                Nueva Cita Odontoclinic
-              </h3>
-              <p className="text-xs text-teal-200/80 font-medium">
-                Agendamiento directo o por WhatsApp (1 a 1)
-              </p>
-            </div>
+    <div className="fixed inset-0 z-50 flex flex-col justify-end sm:justify-center items-center sm:p-4 bg-slate-950/60 backdrop-blur-2xs animate-in fade-in duration-200">
+      {/* Backdrop click to dismiss */}
+      <div className="fixed inset-0" onClick={onClose} />
+
+      {/* Modal Card: Bottom sheet en móviles (< sm), tarjeta centrada en desktop */}
+      <div className="relative z-10 w-full sm:max-w-md bg-white rounded-t-[32px] sm:rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[92dvh] sm:max-h-[88dvh] animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
+        {/* Barra superior de arrastre visual para dispositivos móviles */}
+        <div className="sm:hidden flex justify-center pt-2.5 pb-1">
+          <div className="w-10 h-1 rounded-full bg-slate-300" />
+        </div>
+
+        {/* Cabecera Limpia y Minimalista */}
+        <div className="px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between shrink-0">
+          <div>
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 leading-tight">
+              Agendar Cita
+            </h3>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              {formatearFechaHeader(fechaCita)} • Atención 1 a 1
+            </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Cerrar modal"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Selector Libre de Fecha */}
-        <div className="px-6 py-3 bg-slate-50 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <CalendarDays className="w-4 h-4 text-[#009bb3]" />
-            <span className="text-xs font-bold text-slate-700">Fecha de la cita:</span>
-          </div>
-          <input
-            type="date"
-            value={fechaCita}
-            onChange={(e) => setFechaCita(e.target.value)}
-            className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800 focus:border-[#009bb3] outline-none shadow-2xs cursor-pointer"
-          />
-        </div>
-
-        {/* Resumen de Horarios Ocupados en esa fecha (Para saber qué decirle al paciente por WhatsApp) */}
+        {/* Horarios ya ocupados en esta fecha (insignia discreta) */}
         {citasDelDia.length > 0 && (
-          <div className="px-6 py-2.5 bg-amber-50/70 border-b border-amber-200/60 text-[11px] text-amber-900">
-            <p className="font-bold mb-1 flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-amber-600" />
-              <span>Horarios ya ocupados en esta fecha ({citasDelDia.length}):</span>
-            </p>
-            <div className="flex flex-wrap gap-1.5">
+          <div className="px-5 sm:px-6 py-2 bg-slate-50/80 border-b border-slate-100 flex items-center gap-2 text-[11px] text-slate-600 shrink-0 overflow-x-auto">
+            <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+            <span className="font-semibold text-slate-700 shrink-0">
+              Ocupado ({citasDelDia.length}):
+            </span>
+            <div className="flex items-center gap-1.5 shrink-0">
               {citasDelDia.map((c) => {
-                const ini = new Date(c.fecha_hora_inicio).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
-                const fin = new Date(c.fecha_hora_fin).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
-                const pac = c.paciente ? c.paciente.nombres.split(" ")[0] : "Ocupado";
+                const ini = new Date(c.fecha_hora_inicio).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+                });
                 return (
                   <span
                     key={c.id}
-                    className="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-amber-800 font-semibold text-[10px]"
+                    className="px-2 py-0.5 rounded-md bg-white border border-slate-200/80 text-slate-700 font-bold text-[10px]"
                   >
-                    {ini} - {fin} ({pac})
+                    {ini}
                   </span>
                 );
               })}
@@ -296,110 +289,102 @@ export function NewAppointmentModal({
         )}
 
         {/* Formulario */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {error && (
-            <div className="flex items-start gap-2 p-3 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-2xl">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {/* Alerta en tiempo real de Solapamiento de Horario */}
-          {conflictoHorario && (
-            <div className="flex items-start gap-2.5 p-3 text-xs font-bold text-amber-900 bg-amber-50 border border-amber-300 rounded-2xl animate-in fade-in duration-150">
-              <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <div>
-                <p>¡Horario Ocupado!</p>
-                <p className="text-[11px] font-normal text-amber-800 mt-0.5">
-                  A esa hora ya está agendado <strong>{conflictoHorario.paciente}</strong> ({conflictoHorario.hora}). Como la doctora atiende 1 a 1, elige otro horario libre.
-                </p>
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col">
+          <div className="p-5 sm:p-6 space-y-4 flex-1">
+            {/* Mensajes de Error o Conflicto */}
+            {error && (
+              <div className="flex items-start gap-2 p-3 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-2xl animate-in fade-in">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>{error}</span>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Datos del Paciente (con Autocompletado en vivo) */}
-          <div className="space-y-3 relative">
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Datos del Paciente
-            </p>
-
-            <div className="relative">
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Nombre y Apellidos (Escribe para buscar o registrar)
-              </label>
-              <div className="relative">
-                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej. Roberto Flores..."
-                  value={nombre}
-                  onChange={(e) => handleNombreChange(e.target.value)}
-                  onFocus={() => sugerenciasPacientes.length > 0 && setMostrandoSugerencias(true)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#009bb3] focus:ring-3 focus:ring-[#009bb3]/15 outline-none transition-all"
-                />
-              </div>
-
-              {/* Menú flotante de autocompletado de pacientes existentes */}
-              {mostrandoSugerencias && sugerenciasPacientes.length > 0 && (
-                <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-1.5 z-30 max-h-44 overflow-y-auto">
-                  <p className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
-                    Pacientes registrados previamente
+            {conflictoHorario && (
+              <div className="flex items-start gap-2.5 p-3 text-xs font-bold text-amber-900 bg-amber-50 border border-amber-200/80 rounded-2xl animate-in fade-in">
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <p>Horario ocupado</p>
+                  <p className="text-[11px] font-normal text-amber-800 mt-0.5">
+                    {conflictoHorario.paciente} ya tiene turno a las {conflictoHorario.hora}. Selecciona otro horario.
                   </p>
-                  {sugerenciasPacientes.map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => seleccionarPacienteExistente(p)}
-                      className="w-full text-left px-3 py-2 hover:bg-teal-50/70 transition-colors flex items-center justify-between text-xs cursor-pointer"
-                    >
-                      <div>
-                        <span className="font-bold text-slate-800">
-                          {p.nombres} {p.apellidos || ""}
-                        </span>
-                        <span className="text-[11px] text-slate-400 ml-2">
-                          Cel: {p.telefono}
-                        </span>
-                      </div>
-                      <span className="text-[10px] text-[#009bb3] font-bold">Seleccionar</span>
-                    </button>
-                  ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Celular / WhatsApp (Para confirmaciones)
-              </label>
+            {/* Datos del Paciente */}
+            <div className="space-y-3">
               <div className="relative">
-                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="tel"
-                  required
-                  placeholder="Ej. 74649956"
-                  value={telefono}
-                  onChange={(e) => setTelefono(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#009bb3] focus:ring-3 focus:ring-[#009bb3]/15 outline-none transition-all"
-                />
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Nombre del paciente
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="Nombre y apellido..."
+                    value={nombre}
+                    onChange={(e) => handleNombreChange(e.target.value)}
+                    onFocus={() => sugerenciasPacientes.length > 0 && setMostrandoSugerencias(true)}
+                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#0a1826] focus:ring-2 focus:ring-[#0a1826]/10 outline-none transition-all"
+                  />
+                </div>
+
+                {/* Menú flotante de autocompletado */}
+                {mostrandoSugerencias && sugerenciasPacientes.length > 0 && (
+                  <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-1.5 z-30 max-h-40 overflow-y-auto">
+                    <p className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
+                      Pacientes sugeridos
+                    </p>
+                    {sugerenciasPacientes.map((p) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => seleccionarPacienteExistente(p)}
+                        className="w-full text-left px-3 py-2 hover:bg-slate-50 transition-colors flex items-center justify-between text-xs cursor-pointer"
+                      >
+                        <div>
+                          <span className="font-bold text-slate-800">
+                            {p.nombres} {p.apellidos || ""}
+                          </span>
+                          <span className="text-[11px] text-slate-400 ml-2">
+                            {p.telefono}
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-[#0a1826] font-bold">Elegir</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  WhatsApp / Celular
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="tel"
+                    required
+                    placeholder="Ej. 74649956"
+                    value={telefono}
+                    onChange={(e) => setTelefono(e.target.value)}
+                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#0a1826] focus:ring-2 focus:ring-[#0a1826]/10 outline-none transition-all"
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Procedimiento y Horario */}
-          <div className="pt-2 border-t border-slate-100 space-y-3">
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Servicio Odontológico y Hora
-            </p>
-
+            {/* Tratamiento */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 Tratamiento
               </label>
               <select
                 value={procedimiento}
                 onChange={(e) => setProcedimiento(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:bg-white focus:border-[#009bb3] focus:ring-3 focus:ring-[#009bb3]/15 outline-none transition-all cursor-pointer"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:bg-white focus:border-[#0a1826] focus:ring-2 focus:ring-[#0a1826]/10 outline-none transition-all cursor-pointer"
               >
                 {PROCEDIMIENTOS_LANDING.map((proc) => (
                   <option key={proc.nombre} value={proc.nombre}>
@@ -409,13 +394,30 @@ export function NewAppointmentModal({
               </select>
             </div>
 
+            {/* Fecha y Horario en Grilla Compacta */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Hora de Inicio
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Fecha
                 </label>
                 <div className="relative">
-                  <Clock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+                  <input
+                    type="date"
+                    value={fechaCita}
+                    onChange={(e) => setFechaCita(e.target.value)}
+                    className="w-full pl-8 pr-2 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:border-[#0a1826] focus:ring-2 focus:ring-[#0a1826]/10 outline-none transition-all cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1">
+                  <span>Hora</span>
+                  <span className="text-[10px] text-slate-400 font-medium">Fin ~{horaFinCalculada}</span>
+                </label>
+                <div className="relative">
+                  <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
                   <input
                     type="time"
                     min="09:00"
@@ -423,53 +425,45 @@ export function NewAppointmentModal({
                     step="900"
                     value={horaInicio}
                     onChange={(e) => setHoraInicio(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:border-[#009bb3] focus:ring-3 focus:ring-[#009bb3]/15 outline-none transition-all cursor-pointer"
+                    className="w-full pl-8 pr-2 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:border-[#0a1826] focus:ring-2 focus:ring-[#0a1826]/10 outline-none transition-all cursor-pointer"
                   />
                 </div>
               </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Hora Fin (Estimada)
-                </label>
-                <div className="w-full px-3.5 py-2 rounded-2xl bg-slate-100 border border-slate-200/80 text-xs font-semibold text-slate-600 flex items-center justify-between">
-                  <span>{horaFinCalculada}</span>
-                  <span className="text-[10px] text-teal-600 font-bold bg-teal-50 px-2 py-0.5 rounded-md">
-                    Auto
-                  </span>
-                </div>
-              </div>
             </div>
 
+            {/* Nota opcional */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Motivo de la consulta / Nota (Opcional)
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Nota clínica / Motivo <span className="text-slate-400 font-normal">(opcional)</span>
               </label>
-              <textarea
-                rows={2}
-                placeholder="Ej. Me contactó por WhatsApp para curación molar..."
-                value={motivo}
-                onChange={(e) => setMotivo(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#009bb3] focus:ring-3 focus:ring-[#009bb3]/15 outline-none transition-all resize-none"
-              />
+              <div className="relative">
+                <FileText className="absolute left-3.5 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
+                <textarea
+                  rows={2}
+                  placeholder="Detalles sobre la molestia, motivo o recordatorio..."
+                  value={motivo}
+                  onChange={(e) => setMotivo(e.target.value)}
+                  className="w-full pl-10 pr-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#0a1826] focus:ring-2 focus:ring-[#0a1826]/10 outline-none transition-all resize-none"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Acciones */}
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
+          {/* Pie de Acción */}
+          <div className="sticky bottom-0 bg-white/95 backdrop-blur-xs px-5 sm:px-6 py-3 border-t border-slate-100 flex items-center justify-between gap-3 shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-full text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={Boolean(conflictoHorario)}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#009bb3] hover:bg-[#008398] active:bg-[#007485] text-white text-xs font-bold shadow-md shadow-[#009bb3]/20 hover:shadow-lg transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#0a1826] hover:bg-[#13273d] active:bg-[#0f2236] text-white text-xs font-bold shadow-md shadow-[#0a1826]/15 hover:shadow-lg transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <Check className="w-4 h-4" />
+              <Check className="w-4 h-4 text-[#0ed5dc]" />
               <span>Guardar Cita</span>
             </button>
           </div>

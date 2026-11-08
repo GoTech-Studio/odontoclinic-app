@@ -35,7 +35,7 @@ export function BeforeAfterSlider() {
             <div className="absolute inset-0">
               <Image
                 src="/images/smile_result.jpg"
-                alt="Sonrisa Después del Tratamiento - OdontoClinic Camiri"
+                alt="Sonrisa Después del Tratamiento | OdontoClinic Camiri"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 896px"

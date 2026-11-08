@@ -31,39 +31,41 @@ export default function Home() {
   };
 
   return (
-    <main className="relative min-h-screen bg-white text-slate-800 flex flex-col font-sans">
-      {/* 1. Header / Navbar con botón oscuro "Agendar una cita" */}
-      <Navbar onOpenBooking={handleOpenBooking} />
+    <>
+      <main className="relative flex-1 bg-white text-slate-800 flex flex-col font-sans">
+        {/* 1. Header / Navbar con botón oscuro "Agendar una cita" */}
+        <Navbar onOpenBooking={handleOpenBooking} />
 
-      {/* 2. Hero: "Tu sonrisa, en manos expertas" + 4 Badges */}
-      <Reveal className="reveal-hero">
-        <Hero onOpenBooking={handleOpenBooking} />
-      </Reveal>
+        {/* 2. Hero: "Tu sonrisa, en manos expertas" + 4 Badges */}
+        <Reveal className="reveal-hero">
+          <Hero onOpenBooking={handleOpenBooking} />
+        </Reveal>
 
-      {/* 3. Servicios: "Cuidamos cada detalle de tu sonrisa" (Layout dividido con 6 tarjetas 3x2) */}
-      <Reveal className="reveal-stagger">
-        <ServicesSection onOpenBooking={handleOpenBooking} />
-      </Reveal>
+        {/* 3. Servicios: "Cuidamos cada detalle de tu sonrisa" (Layout dividido con 6 tarjetas 3x2) */}
+        <Reveal className="reveal-stagger">
+          <ServicesSection onOpenBooking={handleOpenBooking} />
+        </Reveal>
 
-      {/* 4. Conoce a la doctora: Dra. Pamela Claros (3 columnas) */}
-      <Reveal className="reveal-stagger">
-        <DoctorProfile onOpenBooking={handleOpenBooking} />
-      </Reveal>
+        {/* 4. Conoce a la doctora: Dra. Pamela Claros (3 columnas) */}
+        <Reveal className="reveal-stagger">
+          <DoctorProfile onOpenBooking={handleOpenBooking} />
+        </Reveal>
 
-      {/* 5. La Clínica: "Un espacio pensado para tu comodidad" + 3 fotos en fila */}
-      <Reveal className="reveal-stagger">
-        <ClinicSection />
-      </Reveal>
+        {/* 5. La Clínica: "Un espacio pensado para tu comodidad" + 3 fotos en fila */}
+        <Reveal className="reveal-stagger">
+          <ClinicSection />
+        </Reveal>
 
-      {/* 6. Ubicación & Contacto: Mapa con pin "Camiri, Bolivia" + Datos + Contacto */}
-      <Reveal className="reveal-stagger">
-        <LocationAndContact onOpenBooking={handleOpenBooking} />
-      </Reveal>
+        {/* 6. Ubicación & Contacto: Mapa con pin "Camiri, Bolivia" + Datos + Contacto */}
+        <Reveal className="reveal-stagger">
+          <LocationAndContact onOpenBooking={handleOpenBooking} />
+        </Reveal>
 
-      {/* 7. Preguntas Frecuentes: "¿Tienes dudas?" + Acordeón 3 preguntas */}
-      <Reveal className="reveal-stagger">
-        <FaqSection />
-      </Reveal>
+        {/* 7. Preguntas Frecuentes: "¿Tienes dudas?" + Acordeón 3 preguntas */}
+        <Reveal className="reveal-stagger">
+          <FaqSection />
+        </Reveal>
+      </main>
 
       {/* 8. Footer: Barra inferior azul marino oscuro con lema y botón de cita */}
       <Footer onOpenBooking={handleOpenBooking} />
@@ -77,6 +79,6 @@ export default function Home() {
 
       {/* Botón Flotante para Volver Arriba */}
       <ScrollToTop />
-    </main>
+    </>
   );
 }
