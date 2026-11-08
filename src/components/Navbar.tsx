@@ -73,7 +73,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
             {activeSections.map((item, idx) => (
               <a
                 key={item.id}
-                className={`hover:text-[#009bb3] transition-colors ${
+                className={`hover:text-[#007485] transition-colors ${
                   idx === 0 ? "text-slate-900 font-semibold" : ""
                 }`}
                 href={item.href}
@@ -88,10 +88,10 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Link
               href="/login"
-              className="hidden md:inline-flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-full text-xs font-semibold text-slate-500 hover:text-[#009bb3] hover:bg-slate-100/80 transition-all cursor-pointer"
+              className="hidden md:inline-flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-full text-xs font-semibold text-slate-500 hover:text-[#007485] hover:bg-slate-100/80 transition-all cursor-pointer"
               title="Acceso al Panel Clínico (Equipo)"
             >
-              <User className="w-4 h-4 text-slate-400 group-hover:text-[#009bb3]" />
+              <User className="w-4 h-4 text-slate-400 group-hover:text-[#007485]" />
               <span className="hidden lg:inline">Acceso Equipo</span>
             </Link>
 
@@ -111,7 +111,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
             <button
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="md:hidden relative w-10 h-10 rounded-xl text-slate-700 hover:text-[#009bb3] hover:bg-slate-100 active:bg-slate-200 transition-colors flex items-center justify-center cursor-pointer select-none"
+              className="md:hidden relative w-10 h-10 rounded-xl text-slate-700 hover:text-[#007485] hover:bg-slate-100 active:bg-slate-200 transition-colors flex items-center justify-center cursor-pointer select-none"
               aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
               aria-expanded={mobileMenuOpen}
             >
@@ -148,7 +148,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
                   key={item.id}
                   onClick={(event) => handleSectionNavigation(event, item.href)}
                   href={item.href}
-                  className="flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-medium text-slate-700 hover:text-[#009bb3] hover:bg-[#ebf4f7]/70 active:bg-[#ebf4f7] transition-all"
+                  className="flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-medium text-slate-700 hover:text-[#007485] hover:bg-[#ebf4f7]/70 active:bg-[#ebf4f7] transition-all"
                 >
                   <span>{item.label}</span>
                   <span className="text-slate-400 text-xs">→</span>
@@ -178,7 +178,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-500 hover:text-[#009bb3] hover:bg-slate-50 transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-500 hover:text-[#007485] hover:bg-slate-50 transition-colors"
               >
                 <User className="w-3.5 h-3.5 text-slate-400" />
                 <span>Acceso Equipo / Panel Clínico</span>
