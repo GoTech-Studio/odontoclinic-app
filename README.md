@@ -86,6 +86,9 @@ npm run lint      # Ejecuta ESLint
 El proyecto puede funcionar en modo local sin configurar servicios externos. Para habilitar integraciones adicionales, crea un archivo `.env.local`:
 
 ```env
+# Número de WhatsApp de la clínica (con código de país, sin '+')
+NEXT_PUBLIC_WHATSAPP_PHONE=
+
 # Reseñas de Google Places
 GOOGLE_PLACES_API_KEY=
 GOOGLE_PLACE_ID=

@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
+import { WHATSAPP_CLINIC_NUMBER } from "@/config/site-config";
 
 export function FloatingWhatsApp() {
-  const clinicPhone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "59178900000";
+  const clinicPhone = WHATSAPP_CLINIC_NUMBER;
 
   return (
     <div className="fixed bottom-6 right-6 z-40">
