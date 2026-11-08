@@ -59,7 +59,7 @@ export function Footer({ onOpenBooking }: FooterProps) {
               href="/login"
               className="text-slate-400 hover:text-[#0ed5dc] transition-colors font-medium underline underline-offset-2 decoration-slate-700 hover:decoration-[#0ed5dc]"
             >
-              Acceso Clínico
+              Acceso Equipo
             </Link>
           </div>
           <p>
