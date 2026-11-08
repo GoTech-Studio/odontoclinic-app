@@ -18,7 +18,7 @@ export const NAV_SECTIONS: NavSectionItem[] = [
   { id: "doctora", label: "La doctora", href: "#doctora", enabled: true },
   { id: "clinica", label: "La clínica", href: "#clinica", enabled: true },
   { id: "ubicacion", label: "Ubicación", href: "#ubicacion", enabled: true },
-  { id: "contacto", label: "Contacto", href: "#contacto", enabled: true },
+  { id: "faq", label: "Preguntas", href: "#faq", enabled: true },
 ];
 
 /**
