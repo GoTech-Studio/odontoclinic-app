@@ -157,18 +157,36 @@ body {
 
 /* Extends the navbar color into the top pull-to-refresh area without changing
    the navbar's real height or the page layout. */
-@media (max-width: 1023px) {
-  .navbar-entry::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: -1000px;
-    height: 1000px;
-    background-color: var(--navbar-surface);
-    pointer-events: none;
-    z-index: 1;
-  }
+.navbar-entry::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1000px;
+  height: 1000px;
+  background-color: var(--navbar-surface);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Extiende el color del footer (#0a1826) en el overscroll inferior sin alterar
+   el alto del documento ni producir líneas divisorias. */
+.footer-overscroll {
+  background-color: #0a1826;
+  box-shadow:
+    0 2px 0 0 #0a1826,
+    0 80px 0 0 #0a1826,
+    0 160px 0 0 #0a1826,
+    0 240px 0 0 #0a1826,
+    0 320px 0 0 #0a1826,
+    0 400px 0 0 #0a1826,
+    0 480px 0 0 #0a1826,
+    0 560px 0 0 #0a1826,
+    0 640px 0 0 #0a1826,
+    0 720px 0 0 #0a1826,
+    0 800px 0 0 #0a1826,
+    0 880px 0 0 #0a1826,
+    0 960px 0 0 #0a1826;
 }
 
 /* Keep anchored sections clear of the sticky navbar. */
@@ -331,12 +349,12 @@ section[id] {
 /* =========================================================================
    Panel Clínico: Overscroll Superior Azul Marino (#0a1826) e Inferior Blanco (#f8fafc)
    ========================================================================= */
-html:has(.panel-container) {
+html.panel-theme {
   background: linear-gradient(180deg, #0a1826 0%, #0a1826 50%, #f8fafc 50%, #f8fafc 100%) no-repeat !important;
   background-color: #f8fafc !important;
 }
 
-body:has(.panel-container) {
+body.panel-theme {
   background-color: #f8fafc !important;
 }
 
