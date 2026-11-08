@@ -683,11 +683,11 @@ export default function CitasPage() {
               type="button"
               onClick={() => setMobileTab("en_atencion")}
               className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-2xl bg-teal-50 hover:bg-teal-100/80 border border-teal-200/70 text-teal-800 transition-colors cursor-pointer active:scale-95"
-              title="Paciente en sillón clínico"
+              title="Paciente en atención clínica"
             >
               <Stethoscope className="w-3.5 h-3.5 text-teal-600 shrink-0" />
               <span className="text-xs font-extrabold">{enAtencion.length}</span>
-              <span className="text-[10px] sm:text-[11px] font-semibold text-teal-700 whitespace-nowrap">en sillón</span>
+              <span className="text-[10px] sm:text-[11px] font-semibold text-teal-700 whitespace-nowrap">en atención</span>
             </button>
 
             {/* Toggle de Sonido de Turnos */}
@@ -847,7 +847,7 @@ export default function CitasPage() {
               : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          <span className="text-xs font-bold">Sillón</span>
+          <span className="text-xs font-bold">Atención</span>
           <span
             className={`px-1.5 py-0.2 rounded-md text-[10px] font-extrabold ${
               enAtencion.length > 0 ? "bg-teal-100 text-teal-800" : "bg-slate-300/60 text-slate-600"
@@ -885,7 +885,7 @@ export default function CitasPage() {
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-slate-600" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                {esHoy ? "Programadas Hoy" : esFuturo ? "Agendadas para el día" : "Citas de la fecha"} ({loading ? "..." : programadas.length})
+                Programadas ({loading ? "..." : programadas.length})
               </h3>
             </div>
             <span className="text-[10px] text-slate-400 font-medium">Por horario</span>
@@ -1216,7 +1216,7 @@ export default function CitasPage() {
             <div className="flex items-center gap-2">
               <Stethoscope className="w-4 h-4 text-teal-600" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                En Sillón con la Doctora ({loading ? "..." : enAtencion.length})
+                En Atención ({loading ? "..." : enAtencion.length})
               </h3>
             </div>
             {esHoy && enAtencion.length > 0 && (
@@ -1237,7 +1237,7 @@ export default function CitasPage() {
             esFuturo ? (
               <div className="p-6 text-center rounded-2xl bg-white/70 border border-dashed border-slate-200 text-slate-500 text-xs space-y-1.5 animate-content-reveal">
                 <Stethoscope className="w-6 h-6 text-teal-500 mx-auto mb-1" />
-                <p className="font-bold text-slate-700">Sillón clínico programado</p>
+                <p className="font-bold text-slate-700">Atención clínica programada</p>
                 <p className="text-[11px] text-slate-400">
                   La atención personalizada de la Dra. Pamela se habilitará durante la jornada del día.
                 </p>
@@ -1248,7 +1248,7 @@ export default function CitasPage() {
               </div>
             ) : (
               <div className="p-6 text-center rounded-2xl bg-white/70 border border-dashed border-slate-200 text-slate-500 text-xs animate-content-reveal">
-                El sillón está libre. Puedes hacer pasar al siguiente paciente de la sala.
+                No hay pacientes en atención actualmente. Puedes llamar al siguiente paciente de la sala de espera.
               </div>
             )
           ) : (
@@ -1311,7 +1311,7 @@ export default function CitasPage() {
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                {esHoy ? "Citas Finalizadas Hoy" : "Citas Finalizadas"} ({loading ? "..." : atendidas.length})
+                Citas Finalizadas ({loading ? "..." : atendidas.length})
               </h3>
             </div>
             <span className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md">
@@ -1361,7 +1361,7 @@ export default function CitasPage() {
             <div className="flex items-center gap-2">
               <XCircle className="w-4 h-4 text-rose-500" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                {esHoy ? "Inasistencias Hoy" : "Inasistencias"} ({loading ? "..." : noAsistieron.length})
+                Inasistencias ({loading ? "..." : noAsistieron.length})
               </h3>
             </div>
             <span className="text-[11px] text-rose-700 font-semibold bg-rose-50 px-2 py-0.5 rounded-md">
