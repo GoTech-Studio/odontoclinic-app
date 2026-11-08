@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Logo } from "./Logo";
 import { Menu, X, User } from "lucide-react";
@@ -12,8 +12,70 @@ interface NavbarProps {
 
 export function Navbar({ onOpenBooking }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string>("inicio");
+  const isClickingRef = useRef(false);
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const headerRef = useRef<HTMLElement>(null);
   const activeSections = NAV_SECTIONS.filter((s) => s.enabled);
+
+  useEffect(() => {
+    // Sincronizar hash inicial si el usuario ingresó directamente con #seccion
+    if (typeof window !== "undefined" && window.location.hash) {
+      const initialId = window.location.hash.replace("#", "");
+      if (activeSections.some((s) => s.id === initialId)) {
+        setActiveId(initialId);
+      }
+    }
+
+    const handleScroll = () => {
+      if (isClickingRef.current) return;
+
+      // Si está en el tope superior de la página
+      if (window.scrollY < 80) {
+        setActiveId("inicio");
+        return;
+      }
+
+      // Si llegó al final del scroll, marcar la última sección activa
+      const isAtBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 60;
+
+      if (isAtBottom) {
+        const lastSection = activeSections[activeSections.length - 1];
+        if (lastSection) {
+          setActiveId(lastSection.id);
+          return;
+        }
+      }
+
+      const headerHeight = headerRef.current?.offsetHeight ?? 80;
+      const scrollPosition = window.scrollY + headerHeight + 60;
+
+      let currentId = "inicio";
+      for (const section of activeSections) {
+        const el = document.getElementById(section.id);
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.scrollY;
+          if (scrollPosition >= top) {
+            currentId = section.id;
+          }
+        }
+      }
+
+      setActiveId(currentId);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (clickTimeoutRef.current) {
+        clearTimeout(clickTimeoutRef.current);
+      }
+    };
+  }, [activeSections]);
 
   const handleSectionNavigation = (
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -26,6 +88,14 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
 
     event.preventDefault();
     setMobileMenuOpen(false);
+
+    const targetId = href.replace("#", "");
+    setActiveId(targetId);
+    isClickingRef.current = true;
+    if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
+    clickTimeoutRef.current = setTimeout(() => {
+      isClickingRef.current = false;
+    }, 1000);
 
     window.history.replaceState(null, "", href);
 
@@ -64,34 +134,41 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between">
           {/* Brand Logo */}
-          <a className="flex items-center gap-2.5 group" href="#inicio">
+          <a
+            className="flex items-center gap-2.5 group"
+            href="#inicio"
+            onClick={(event) => handleSectionNavigation(event, "#inicio")}
+          >
             <Logo size="md" />
           </a>
 
           {/* Desktop Navigation Menu (Driven by NAV_SECTIONS) */}
-          <nav className="hidden md:flex items-center space-x-7 text-sm font-medium text-slate-600">
-            {activeSections.map((item, idx) => (
-              <a
-                key={item.id}
-                className={`hover:text-[#009bb3] transition-colors ${
-                  idx === 0 ? "text-slate-900 font-semibold" : ""
-                }`}
-                href={item.href}
-                onClick={(event) => handleSectionNavigation(event, item.href)}
-              >
-                {item.label}
-              </a>
-            ))}
+          <nav className="hidden md:flex items-center space-x-7 text-sm font-medium">
+            {activeSections.map((item) => {
+              const isActive = activeId === item.id;
+              return (
+                <a
+                  key={item.id}
+                  className={`transition-colors hover:text-[#007485] ${
+                    isActive ? "text-slate-900 font-semibold" : "text-slate-600"
+                  }`}
+                  href={item.href}
+                  onClick={(event) => handleSectionNavigation(event, item.href)}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
           </nav>
 
           {/* CTA Appointment Button & Staff Login */}
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Link
               href="/login"
-              className="hidden md:inline-flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-full text-xs font-semibold text-slate-500 hover:text-[#009bb3] hover:bg-slate-100/80 transition-all cursor-pointer"
+              className="hidden md:inline-flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-full text-xs font-semibold text-slate-500 hover:text-[#007485] hover:bg-slate-100/80 transition-all cursor-pointer"
               title="Acceso al Panel Clínico (Equipo)"
             >
-              <User className="w-4 h-4 text-slate-400 group-hover:text-[#009bb3]" />
+              <User className="w-4 h-4 text-slate-400 group-hover:text-[#007485]" />
               <span className="hidden lg:inline">Acceso Equipo</span>
             </Link>
 
@@ -111,7 +188,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
             <button
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="md:hidden relative w-10 h-10 rounded-xl text-slate-700 hover:text-[#009bb3] hover:bg-slate-100 active:bg-slate-200 transition-colors flex items-center justify-center cursor-pointer select-none"
+              className="md:hidden relative w-10 h-10 rounded-xl text-slate-700 hover:text-[#007485] hover:bg-slate-100 active:bg-slate-200 transition-colors flex items-center justify-center cursor-pointer select-none"
               aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
               aria-expanded={mobileMenuOpen}
             >
@@ -143,17 +220,26 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
         >
           <div className="px-5 pt-3 pb-6 space-y-1 divide-y divide-slate-100/80">
             <div className="space-y-1 pb-2">
-              {activeSections.map((item) => (
-                <a
-                  key={item.id}
-                  onClick={(event) => handleSectionNavigation(event, item.href)}
-                  href={item.href}
-                  className="flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-medium text-slate-700 hover:text-[#009bb3] hover:bg-[#ebf4f7]/70 active:bg-[#ebf4f7] transition-all"
-                >
-                  <span>{item.label}</span>
-                  <span className="text-slate-400 text-xs">→</span>
-                </a>
-              ))}
+              {activeSections.map((item) => {
+                const isActive = activeId === item.id;
+                return (
+                  <a
+                    key={item.id}
+                    onClick={(event) => handleSectionNavigation(event, item.href)}
+                    href={item.href}
+                    className={`flex items-center justify-between py-2.5 px-3 rounded-xl text-sm transition-all ${
+                      isActive
+                        ? "font-semibold text-slate-900 bg-slate-100/90"
+                        : "font-medium text-slate-700 hover:text-[#007485] hover:bg-[#ebf4f7]/70 active:bg-[#ebf4f7]"
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                    <span className={`text-xs ${isActive ? "text-[#007485] font-bold" : "text-slate-400"}`}>
+                      →
+                    </span>
+                  </a>
+                );
+              })}
             </div>
 
             <div className="pt-4">
@@ -178,7 +264,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-500 hover:text-[#009bb3] hover:bg-slate-50 transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-500 hover:text-[#007485] hover:bg-slate-50 transition-colors"
               >
                 <User className="w-3.5 h-3.5 text-slate-400" />
                 <span>Acceso Equipo / Panel Clínico</span>

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CLINIC_SERVICES } from "@/config/site-config";
+import { CLINIC_SERVICES, WHATSAPP_CLINIC_NUMBER } from "@/config/site-config";
 import { ServiceIconType } from "@/types/domain";
 
 interface ServicesSectionProps {
@@ -289,14 +289,17 @@ export function ServicesSection({ onOpenBooking }: ServicesSectionProps) {
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-8">
               Una atención integral y personalizada para devolverle la salud y confianza a tu boca. Combinamos experiencia, tecnología y un trato cercano pensado en tu bienestar.
             </p>
-            <button
-              type="button"
-              onClick={() => onOpenBooking()}
+            <a
+              href={`https://wa.me/${WHATSAPP_CLINIC_NUMBER}?text=${encodeURIComponent(
+                "Hola Odontoclinic Camiri, me gustaría conocer más sobre todos los servicios y tratamientos que ofrecen en la clínica."
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn-pill-outline inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer"
             >
               <span>Conoce todos los servicios</span>
               <span>→</span>
-            </button>
+            </a>
           </div>
 
           {/* Services Grid (Driven by CLINIC_SERVICES registry) */}
