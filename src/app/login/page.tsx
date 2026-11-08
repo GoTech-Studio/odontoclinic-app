@@ -30,50 +30,14 @@ export default function LoginPage() {
   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
 
   useEffect(() => {
-    if (!isSupabaseConfigured()) {
-      setConfigMissing(true);
-    }
-
-    const prevHtmlOverflow = document.documentElement.style.overflow;
-    const prevHtmlPosition = document.documentElement.style.position;
-    const prevHtmlHeight = document.documentElement.style.height;
-    const prevBodyOverflow = document.body.style.overflow;
-    const prevBodyPosition = document.body.style.position;
-    const prevBodyHeight = document.body.style.height;
-
-    // Bloqueo estricto del viewport y rebote de iOS/WebKit
-    document.documentElement.classList.add("login-lock");
-    document.body.classList.add("login-lock");
-    document.documentElement.style.overflow = "hidden";
-    document.documentElement.style.position = "fixed";
-    document.documentElement.style.width = "100%";
-    document.documentElement.style.height = "100%";
-    document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.width = "100%";
-    document.body.style.height = "100%";
-
-    const preventOverscroll = (e: TouchEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (!target?.closest(".allow-touch-scroll")) {
-        e.preventDefault();
+    const rafId = window.requestAnimationFrame(() => {
+      if (!isSupabaseConfigured()) {
+        setConfigMissing(true);
       }
-    };
-
-    window.addEventListener("touchmove", preventOverscroll, { passive: false });
+    });
 
     return () => {
-      document.documentElement.classList.remove("login-lock");
-      document.body.classList.remove("login-lock");
-      document.documentElement.style.overflow = prevHtmlOverflow;
-      document.documentElement.style.position = prevHtmlPosition;
-      document.documentElement.style.height = prevHtmlHeight;
-      document.documentElement.style.width = "";
-      document.body.style.overflow = prevBodyOverflow;
-      document.body.style.position = prevBodyPosition;
-      document.body.style.height = prevBodyHeight;
-      document.body.style.width = "";
-      window.removeEventListener("touchmove", preventOverscroll);
+      window.cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -148,7 +112,7 @@ export default function LoginPage() {
   return (
     <div
       onPointerMove={handlePointerMove}
-      className="login-page-wrapper fixed inset-0 w-full h-full h-dvh bg-gradient-to-br from-[#071626] via-[#0d2238] to-[#0a1826] text-slate-800 flex flex-col justify-center items-center px-4 sm:px-6 overflow-hidden select-none z-50 touch-none"
+      className="login-page-wrapper fixed inset-0 w-full h-full h-dvh bg-gradient-to-br from-[#071626] via-[#0d2238] to-[#0a1826] text-slate-800 flex flex-col justify-center items-center px-4 sm:px-6 overflow-hidden select-none z-50 overscroll-none"
     >
       {/* Atmósfera Clínica Luminosa & Dinámica (Ondas turquesa de Odontoclinic) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">

@@ -8,10 +8,10 @@
     --font-sans: var(--font-plus-jakarta), sans-serif;
   }
 
-html {
+  html {
     background: linear-gradient(180deg, #ffffff 0%, #ffffff 50%, #0a1826 50%, #0a1826 100%) no-repeat;
     background-color: #0a1826;
-    overscroll-behavior-y: contain;
+    scroll-behavior: smooth;
     scroll-padding-top: 4.5rem;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -27,8 +27,6 @@ html {
     color: var(--foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-    scroll-behavior: smooth;
-    overflow-x: clip;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -138,7 +136,8 @@ body {
 
 .reveal-visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
+  transform: none;
+  will-change: auto;
 }
 
 .reveal-navigation-target {
@@ -162,8 +161,8 @@ body {
   .navbar-entry::before {
     content: "";
     position: absolute;
-    left: -50px;
-    right: -50px;
+    left: 0;
+    right: 0;
     top: -1000px;
     height: 1000px;
     background-color: var(--navbar-surface);
@@ -238,21 +237,7 @@ section[id] {
   }
 }
 
-/* Bloqueo estricto de rebote/overscroll exclusivamente para la pantalla de inicio de sesión (/login) */
-html:has(.login-page-wrapper),
-body:has(.login-page-wrapper),
-html.login-lock,
-body.login-lock {
-  position: fixed !important;
-  width: 100% !important;
-  height: 100% !important;
-  height: 100dvh !important;
-  overflow: hidden !important;
-  overscroll-behavior: none !important;
-  overscroll-behavior-y: none !important;
-  touch-action: none !important;
-}
-
+/* Contenedor fijo para la pantalla de inicio de sesión (/login) sin bloquear html/body globalmente */
 .login-page-wrapper {
   position: fixed !important;
   inset: 0 !important;
@@ -261,8 +246,6 @@ body.login-lock {
   height: 100dvh !important;
   overflow: hidden !important;
   overscroll-behavior: none !important;
-  overscroll-behavior-y: none !important;
-  touch-action: none !important;
 }
 
 /* Animaciones luminosas y dinámicas para el fondo interactivo de /login */
