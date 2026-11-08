@@ -9,6 +9,7 @@
   }
 
 html {
+    background: linear-gradient(180deg, #ffffff 0%, #ffffff 50%, #0a1826 50%, #0a1826 100%) no-repeat;
     background-color: #0a1826;
     overscroll-behavior-y: contain;
     scroll-padding-top: 4.5rem;
@@ -22,7 +23,7 @@ html {
   }
 
   body {
-    background-color: #0a1826;
+    background: transparent;
     color: var(--foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -161,10 +162,10 @@ body {
   .navbar-entry::before {
     content: "";
     position: absolute;
-    left: 0;
-    right: 0;
-    top: -240px;
-    height: 240px;
+    left: -50px;
+    right: -50px;
+    top: -1000px;
+    height: 1000px;
     background-color: var(--navbar-surface);
     pointer-events: none;
     z-index: 1;
@@ -345,25 +346,35 @@ body.login-lock {
 }
 
 /* =========================================================================
-   Panel Clínico: Overscroll Blanco y Animaciones Suaves Estilo Landing
+   Panel Clínico: Overscroll Superior Azul Marino (#0a1826) e Inferior Blanco (#f8fafc)
    ========================================================================= */
-html:has(.panel-container),
+html:has(.panel-container) {
+  background: linear-gradient(180deg, #0a1826 0%, #0a1826 50%, #f8fafc 50%, #f8fafc 100%) no-repeat !important;
+  background-color: #f8fafc !important;
+}
+
 body:has(.panel-container) {
   background-color: #f8fafc !important;
 }
 
-@media (max-width: 1023px) {
-  .panel-navbar::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: -240px;
-    height: 240px;
-    background-color: #0a1826;
-    pointer-events: none;
-    z-index: 1;
-  }
+.panel-navbar {
+  background-color: #0a1826 !important;
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  animation: header-entry 800ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
+  will-change: opacity, transform;
+}
+
+.panel-navbar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1000px;
+  height: 1000px;
+  background-color: #0a1826;
+  pointer-events: none;
+  z-index: 1;
 }
 
 @keyframes panel-card-entry {

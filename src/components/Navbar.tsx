@@ -58,7 +58,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
     <>
       <header
         ref={headerRef}
-        className={`navbar-entry sticky top-0 z-40 bg-white shadow-none md:shadow-sm border-b-0 lg:border-b border-slate-100/70 transition-all duration-300 ${
+        className={`navbar-entry sticky top-0 z-40 w-full bg-white shadow-none md:shadow-sm border-b-0 lg:border-b border-slate-100/70 transition-all duration-300 ${
           mobileMenuOpen ? "rounded-b-none" : "rounded-b-[28px] sm:rounded-b-[36px]"
         }`}
       >
