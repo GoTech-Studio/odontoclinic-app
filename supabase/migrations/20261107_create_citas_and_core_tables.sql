@@ -1,6 +1,6 @@
 -- ==============================================================================
 -- Migración: Módulo de Citas, Pacientes y Catálogo Odontológico
--- OdontoClinic App - Base de datos PostgreSQL (Supabase)
+-- Odontoclinic App - Base de datos PostgreSQL (Supabase)
 -- ==============================================================================
 
 -- 1. EXTENSIONES

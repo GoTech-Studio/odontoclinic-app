@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   Phone,
 } from "lucide-react";
+import { WHATSAPP_CLINIC_NUMBER } from "@/config/site-config";
 
 interface TriageOption {
   id: string;
@@ -39,7 +40,7 @@ const triageOptions: TriageOption[] = [
       "Aliviamos el dolor desde la primera sesión con anestesia computarizada indolora y tecnología rotatoria que preserva tu pieza dental natural.",
     benefits: ["Alivio del dolor inmediato", "Sin dolor durante el procedimiento", "Salvamos tu diente natural"],
     estimatedTime: "1 sesión (45 a 60 min)",
-    whatsappMessage: "Hola OdontoClinic Camiri, tengo un dolor o molestia dental y requiero una consulta de urgencia/valoración.",
+    whatsappMessage: "Hola Odontoclinic Camiri, tengo un dolor o molestia dental y requiero una consulta de urgencia/valoración.",
   },
   {
     id: "estetica",
@@ -52,7 +53,7 @@ const triageOptions: TriageOption[] = [
       "Diseño digital de sonrisa para lograr dientes blancos, armónicos y naturales. Usamos blanqueamiento láser que no daña tu esmalte ni causa hipersensibilidad.",
     benefits: ["Hasta 4 tonos más blanco en 1 sesión", "Carillas cerámicas ultradelgadas", "Diseño previo digital"],
     estimatedTime: "1 a 2 sesiones",
-    whatsappMessage: "Hola OdontoClinic Camiri, me interesa mejorar la estética de mi sonrisa (blanqueamiento o carillas).",
+    whatsappMessage: "Hola Odontoclinic Camiri, me interesa mejorar la estética de mi sonrisa (blanqueamiento o carillas).",
   },
   {
     id: "implantes",
@@ -60,12 +61,12 @@ const triageOptions: TriageOption[] = [
     shortDesc: "Deseo recuperar mi masticación y la seguridad al sonreír",
     icon: <ShieldAlert className="w-6 h-6 text-blue-500" />,
     recommendedService: "Implantología Dental de Titanio",
-    doctorSpecialty: "Cirugía e Implantología OdontoClinic",
+    doctorSpecialty: "Cirugía e Implantología Odontoclinic",
     details:
       "Los implantes dentales son raíces artificiales de titanio biocompatible que reemplazan dientes perdidos de manera fija, duradera y con estética idéntica a tus dientes naturales.",
     benefits: ["Comes de todo con total seguridad", "No desgasta los dientes vecinos", "Duran toda la vida"],
     estimatedTime: "Evaluación + Planificación 3D",
-    whatsappMessage: "Hola OdontoClinic Camiri, deseo información sobre implantes dentales para recuperar una o más piezas.",
+    whatsappMessage: "Hola Odontoclinic Camiri, deseo información sobre implantes dentales para recuperar una o más piezas.",
   },
   {
     id: "ortodoncia",
@@ -78,7 +79,7 @@ const triageOptions: TriageOption[] = [
       "Corrige la posición de tus piezas dentales mejorando la estética de tu rostro y la masticación. Opciones discretas y con fuerzas ligeras para evitar molestias.",
     benefits: ["Mejora estética y perfil facial", "Opciones transparentes/estéticas", "Planes de pago mensuales"],
     estimatedTime: "Control mensual",
-    whatsappMessage: "Hola OdontoClinic Camiri, quiero una consulta para iniciar tratamiento de ortodoncia (brackets/alineadores).",
+    whatsappMessage: "Hola Odontoclinic Camiri, quiero una consulta para iniciar tratamiento de ortodoncia (brackets/alineadores).",
   },
   {
     id: "ninos",
@@ -91,7 +92,7 @@ const triageOptions: TriageOption[] = [
       "Un entorno lúdico, empático y paciente pensado para que los niños crezcan amando ir al dentista. Sellantes, flúor y prevención sin dolor ni lágrimas.",
     benefits: ["Ambiente divertido y amigable", "Técnicas de manejo de conducta", "Educación bucal en familia"],
     estimatedTime: "30 a 45 min",
-    whatsappMessage: "Hola OdontoClinic Camiri, deseo agendar una cita de Odontopediatría para mi hijo/a.",
+    whatsappMessage: "Hola Odontoclinic Camiri, deseo agendar una cita de Odontopediatría para mi hijo/a.",
   },
   {
     id: "bichectomia",
@@ -99,12 +100,12 @@ const triageOptions: TriageOption[] = [
     shortDesc: "Reducción de mejillas para resaltar pómulos",
     icon: <Sparkle className="w-6 h-6 text-purple-500" />,
     recommendedService: "Bichectomía Estética Facial",
-    doctorSpecialty: "Cirugía Estética Facial OdontoClinic",
+    doctorSpecialty: "Cirugía Estética Facial Odontoclinic",
     details:
       "Procedimiento quirúrgico menor ambulatorio para retirar las bolsas de Bichat (grasa en las mejillas), logrando un rostro más delgado, definido y juvenil.",
     benefits: ["Procedimiento rápido (40 min)", "Incisiones por dentro de la boca (sin cicatrices)", "Resultados definitivos"],
     estimatedTime: "Procedimiento ambulatorio (40 min)",
-    whatsappMessage: "Hola OdontoClinic Camiri, me interesa conocer más sobre el procedimiento de Bichectomía.",
+    whatsappMessage: "Hola Odontoclinic Camiri, me interesa conocer más sobre el procedimiento de Bichectomía.",
   },
 ];
 
@@ -218,7 +219,7 @@ export function QuickTriage() {
                   ¿Quieres resolver dudas directamente con nosotros?
                 </p>
                 <a
-                  href={`https://wa.me/59178900000?text=${encodeURIComponent(
+                  href={`https://wa.me/${WHATSAPP_CLINIC_NUMBER}?text=${encodeURIComponent(
                     activeTriage.whatsappMessage
                   )}`}
                   target="_blank"

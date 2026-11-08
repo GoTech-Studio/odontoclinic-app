@@ -3,7 +3,7 @@ import { PanelNavbar } from "@/components/panel/PanelNavbar";
 import { PanelThemeEffect } from "@/components/panel/PanelThemeEffect";
 
 export const metadata = {
-  title: "Panel Clínico | OdontoClinic",
+  title: "Panel Clínico | Odontoclinic",
   description: "Gestión de agenda diaria, sala de espera y pacientes.",
 };
 
