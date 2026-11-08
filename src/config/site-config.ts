@@ -6,7 +6,8 @@ import {
   SiteImagesMap,
 } from "@/types/domain";
 
-export const WHATSAPP_CLINIC_NUMBER = "59174649956";
+export const WHATSAPP_CLINIC_NUMBER =
+  process.env.NEXT_PUBLIC_WHATSAPP_PHONE?.trim() || "";
 
 /**
  * Navegación centralizada: agregar o desactivar una sección aquí

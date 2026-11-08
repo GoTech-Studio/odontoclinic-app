@@ -1,20 +1,34 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export function PanelThemeEffect() {
+  const pathname = usePathname();
+  const isPanelRoute = pathname?.startsWith("/panel") ?? false;
+
   useEffect(() => {
-    // Configurar overscroll dividido para el panel clínico:
+    const html = document.documentElement;
+    const body = document.body;
+
+    if (!isPanelRoute) {
+      html.classList.remove("panel-theme");
+      body.classList.remove("panel-theme");
+      html.style.removeProperty("background");
+      html.style.removeProperty("background-color");
+      body.style.removeProperty("background-color");
+      return;
+    }
+
+    // Configurar overscroll dividido exclusivamente en rutas del panel clínico:
     // Superior: azul marino (#0a1826) continuo con el navbar
     // Inferior: blanco / slate claro (#f8fafc) continuo con el fondo del panel
-    const prevHtmlBackground = document.documentElement.style.background;
-    const prevHtmlBg = document.documentElement.style.backgroundColor;
-    const prevBodyBg = document.body.style.backgroundColor;
-
-    document.documentElement.style.background =
+    html.classList.add("panel-theme");
+    body.classList.add("panel-theme");
+    html.style.background =
       "linear-gradient(180deg, #0a1826 0%, #0a1826 50%, #f8fafc 50%, #f8fafc 100%) no-repeat";
-    document.documentElement.style.backgroundColor = "#f8fafc";
-    document.body.style.backgroundColor = "#f8fafc";
+    html.style.backgroundColor = "#f8fafc";
+    body.style.backgroundColor = "#f8fafc";
 
     let meta = document.querySelector('meta[name="theme-color"]');
     let createdMeta = false;
@@ -28,16 +42,18 @@ export function PanelThemeEffect() {
     meta.setAttribute("content", "#0a1826");
 
     return () => {
-      document.documentElement.style.background = prevHtmlBackground;
-      document.documentElement.style.backgroundColor = prevHtmlBg;
-      document.body.style.backgroundColor = prevBodyBg;
+      html.classList.remove("panel-theme");
+      body.classList.remove("panel-theme");
+      html.style.removeProperty("background");
+      html.style.removeProperty("background-color");
+      body.style.removeProperty("background-color");
       if (createdMeta && meta) {
         meta.remove();
       } else if (meta && prevThemeColor) {
         meta.setAttribute("content", prevThemeColor);
       }
     };
-  }, []);
+  }, [isPanelRoute]);
 
   return null;
 }

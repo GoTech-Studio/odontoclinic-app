@@ -20,7 +20,7 @@ export function Hero({ onOpenBooking }: HeroProps) {
 
   return (
     <section
-      className="relative overflow-x-clip lg:overflow-hidden bg-[#ebf4f7] rounded-bl-[36px] sm:rounded-bl-[44px] lg:rounded-bl-[52px] rounded-br-[29px] sm:rounded-br-[35px] lg:rounded-br-[42px] pt-8 sm:pt-12 pb-10 sm:pb-14 lg:-mt-20 lg:pt-36 lg:pb-16 shadow-sm"
+      className="relative overflow-x-clip lg:overflow-hidden bg-[#ebf4f7] rounded-b-[36px] sm:rounded-b-[44px] lg:rounded-b-[52px] pt-8 sm:pt-12 pb-10 sm:pb-14 lg:-mt-20 lg:pt-36 lg:pb-16 shadow-sm"
       id="inicio"
     >
       {/* Decorative ambient gradient glow behind hero */}

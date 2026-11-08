@@ -92,21 +92,32 @@ export function LocationAndContact({ onOpenBooking }: LocationAndContactProps) {
   });
 
   useEffect(() => {
-    setScheduleStatus(getBoliviaScheduleStatus());
+    const rafId = window.requestAnimationFrame(() => {
+      setScheduleStatus(getBoliviaScheduleStatus());
+    });
     // Actualizar estado cada 60 segundos
     const interval = setInterval(() => {
       setScheduleStatus(getBoliviaScheduleStatus());
     }, 60000);
-    return () => clearInterval(interval);
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
     <section className="py-10 sm:py-14 lg:py-16 bg-[#f8fafc] border-t border-slate-200/70" id="ubicacion">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center lg:items-stretch">
           {/* Mapa Interactivo con Google Maps (Izquierda) */}
-          <div className="lg:col-span-5">
-            <div className="relative rounded-2xl overflow-hidden border border-slate-200/90 shadow-md h-72 sm:h-80 lg:h-[350px] bg-slate-100 group">
+          <div className="lg:col-span-5 flex flex-col">
+            <p
+              aria-hidden="true"
+              className="hidden lg:block text-[11px] sm:text-xs font-semibold tracking-widest uppercase mb-3.5 invisible select-none"
+            >
+              ATENCIÓN & CONTACTO
+            </p>
+            <div className="relative rounded-2xl overflow-hidden border border-slate-200/90 shadow-md h-72 sm:h-80 lg:h-auto lg:flex-1 bg-slate-100 group">
               {/* Google Maps Embed Iframe con las coordenadas exactas de Camiri */}
               <iframe
                 title="Ubicación de Odontoclinic en Google Maps"
@@ -144,7 +155,7 @@ export function LocationAndContact({ onOpenBooking }: LocationAndContactProps) {
           </div>
 
           {/* Location Details (Middle) */}
-          <div className="lg:col-span-4 space-y-4 lg:pl-4">
+          <div className="lg:col-span-4 lg:self-center lg:pt-6 space-y-4 lg:pl-4">
             <p className="text-[11px] sm:text-xs font-semibold tracking-widest text-[#007485] uppercase">
               UBICACIÓN
             </p>
@@ -172,7 +183,7 @@ export function LocationAndContact({ onOpenBooking }: LocationAndContactProps) {
 
           {/* Contact & Dynamic Schedule Details (Right) */}
           <div
-            className="lg:col-span-3 space-y-3.5 pt-6 lg:pt-0 border-t lg:border-t-0 border-slate-200"
+            className="lg:col-span-3 flex flex-col space-y-3.5 pt-6 lg:pt-0 border-t lg:border-t-0 border-slate-200"
             id="contacto"
           >
             <p className="text-[11px] sm:text-xs font-semibold tracking-widest text-[#007485] uppercase">

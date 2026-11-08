@@ -10,72 +10,88 @@ interface NavbarProps {
   onOpenBooking: () => void;
 }
 
+const ACTIVE_SECTIONS = NAV_SECTIONS.filter((s) => s.enabled);
+
 export function Navbar({ onOpenBooking }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>("inicio");
   const isClickingRef = useRef(false);
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const headerRef = useRef<HTMLElement>(null);
-  const activeSections = NAV_SECTIONS.filter((s) => s.enabled);
 
   useEffect(() => {
-    // Sincronizar hash inicial si el usuario ingresó directamente con #seccion
-    if (typeof window !== "undefined" && window.location.hash) {
-      const initialId = window.location.hash.replace("#", "");
-      if (activeSections.some((s) => s.id === initialId)) {
-        setActiveId(initialId);
-      }
-    }
-
     const handleScroll = () => {
       if (isClickingRef.current) return;
 
       // Si está en el tope superior de la página
       if (window.scrollY < 80) {
-        setActiveId("inicio");
+        setActiveId((prev) => (prev === "inicio" ? prev : "inicio"));
         return;
       }
 
       // Si llegó al final del scroll, marcar la última sección activa
       const isAtBottom =
         window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 60;
+        document.documentElement.scrollHeight - 40;
 
       if (isAtBottom) {
-        const lastSection = activeSections[activeSections.length - 1];
+        const lastSection = ACTIVE_SECTIONS[ACTIVE_SECTIONS.length - 1];
         if (lastSection) {
-          setActiveId(lastSection.id);
+          setActiveId((prev) =>
+            prev === lastSection.id ? prev : lastSection.id
+          );
           return;
         }
       }
 
       const headerHeight = headerRef.current?.offsetHeight ?? 80;
-      const scrollPosition = window.scrollY + headerHeight + 60;
+      const triggerOffset =
+        headerHeight + Math.min(160, window.innerHeight * 0.25);
 
-      let currentId = "inicio";
-      for (const section of activeSections) {
+      let currentId = ACTIVE_SECTIONS[0]?.id ?? "inicio";
+      for (const section of ACTIVE_SECTIONS) {
         const el = document.getElementById(section.id);
         if (el) {
-          const top = el.getBoundingClientRect().top + window.scrollY;
-          if (scrollPosition >= top) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= triggerOffset) {
             currentId = section.id;
           }
         }
       }
 
-      setActiveId(currentId);
+      setActiveId((prev) => (prev === currentId ? prev : currentId));
     };
 
+    const releaseClickLock = () => {
+      if (isClickingRef.current) {
+        isClickingRef.current = false;
+        if (clickTimeoutRef.current) {
+          clearTimeout(clickTimeoutRef.current);
+          clickTimeoutRef.current = null;
+        }
+      }
+    };
+
+    const rafId = window.requestAnimationFrame(() => {
+      handleScroll();
+    });
+
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+    window.addEventListener("resize", handleScroll, { passive: true });
+    window.addEventListener("wheel", releaseClickLock, { passive: true });
+    window.addEventListener("touchmove", releaseClickLock, { passive: true });
 
     return () => {
+      window.cancelAnimationFrame(rafId);
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+      window.removeEventListener("wheel", releaseClickLock);
+      window.removeEventListener("touchmove", releaseClickLock);
       if (clickTimeoutRef.current) {
         clearTimeout(clickTimeoutRef.current);
       }
     };
-  }, [activeSections]);
+  }, []);
 
   const handleSectionNavigation = (
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -144,7 +160,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
 
           {/* Desktop Navigation Menu (Driven by NAV_SECTIONS) */}
           <nav className="hidden md:flex items-center space-x-7 text-sm font-medium">
-            {activeSections.map((item) => {
+            {ACTIVE_SECTIONS.map((item) => {
               const isActive = activeId === item.id;
               return (
                 <a
@@ -165,11 +181,11 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Link
               href="/login"
-              className="hidden md:inline-flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-full text-xs font-semibold text-slate-500 hover:text-[#007485] hover:bg-slate-100/80 transition-all cursor-pointer"
-              title="Acceso al Panel Clínico (Equipo)"
+              aria-label="Acceso Equipo"
+              className="group hidden md:inline-flex items-center justify-center w-9 h-9 rounded-full text-slate-500 hover:text-[#007485] hover:bg-slate-100/80 transition-all cursor-pointer"
+              title="Acceso Equipo"
             >
-              <User className="w-4 h-4 text-slate-400 group-hover:text-[#007485]" />
-              <span className="hidden lg:inline">Acceso Equipo</span>
+              <User className="w-4 h-4 text-slate-500 group-hover:text-[#007485] transition-colors" />
             </Link>
 
             <button
@@ -212,22 +228,22 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
 
         {/* Menú móvil flotante superpuesto (no desplaza el hero) */}
         <div
-          className={`md:hidden absolute top-full -mt-px left-0 right-0 z-40 bg-white rounded-b-[28px] shadow-2xl shadow-slate-900/15 transition-all duration-300 ease-in-out origin-top overflow-hidden ${
+          className={`md:hidden absolute top-full -mt-px left-0 right-0 w-full z-40 bg-white rounded-b-[28px] sm:rounded-b-[36px] shadow-2xl shadow-slate-900/15 transition-all duration-300 ease-in-out origin-top overflow-hidden ${
             mobileMenuOpen
               ? "opacity-100 translate-y-0 pointer-events-auto max-h-[500px]"
               : "opacity-0 -translate-y-3 pointer-events-none max-h-0"
           }`}
         >
-          <div className="px-5 pt-3 pb-6 space-y-1 divide-y divide-slate-100/80">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-3 pb-6 space-y-1 divide-y divide-slate-100/80">
             <div className="space-y-1 pb-2">
-              {activeSections.map((item) => {
+              {ACTIVE_SECTIONS.map((item) => {
                 const isActive = activeId === item.id;
                 return (
                   <a
                     key={item.id}
                     onClick={(event) => handleSectionNavigation(event, item.href)}
                     href={item.href}
-                    className={`flex items-center justify-between py-2.5 px-3 rounded-xl text-sm transition-all ${
+                    className={`flex items-center justify-between py-2.5 px-2 rounded-xl text-sm transition-all ${
                       isActive
                         ? "font-semibold text-slate-900 bg-slate-100/90"
                         : "font-medium text-slate-700 hover:text-[#007485] hover:bg-[#ebf4f7]/70 active:bg-[#ebf4f7]"

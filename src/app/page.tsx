@@ -32,7 +32,7 @@ export default function Home() {
 
   return (
     <>
-      <main className="relative flex-1 bg-white text-slate-800 flex flex-col font-sans">
+      <main className="relative flex-1 w-full max-w-full overflow-x-clip bg-white text-slate-800 flex flex-col font-sans">
         {/* 1. Header / Navbar con botón oscuro "Agendar una cita" */}
         <Navbar onOpenBooking={handleOpenBooking} />
 

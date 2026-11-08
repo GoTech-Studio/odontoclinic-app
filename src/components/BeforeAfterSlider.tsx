@@ -24,7 +24,7 @@ export function BeforeAfterSlider() {
           </h2>
           <p className="mt-4 text-slate-600 text-base sm:text-lg">
             Desliza el comparador interactivo para ver el cambio estético antes y después de
-            nuestros tratamientos de odontología estética y blanqueamiento en OdontoClinic.
+            nuestros tratamientos de odontología estética y blanqueamiento en Odontoclinic.
           </p>
         </div>
 
@@ -35,7 +35,7 @@ export function BeforeAfterSlider() {
             <div className="absolute inset-0">
               <Image
                 src="/images/smile_result.jpg"
-                alt="Sonrisa Después del Tratamiento | OdontoClinic Camiri"
+                alt="Sonrisa Después del Tratamiento | Odontoclinic Camiri"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 896px"

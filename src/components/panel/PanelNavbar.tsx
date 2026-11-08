@@ -20,7 +20,7 @@ export function PanelNavbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [userName, setUserName] = useState<string>("Equipo");
-  const [userRole, setUserRole] = useState<string>("Personal");
+  const [userRole, setUserRole] = useState<string>("Equipo Odontoclinic");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -46,16 +46,16 @@ export function PanelNavbar() {
 
           if (perfil?.nombres) {
             setUserName(perfil.nombres);
-            setUserRole(perfil.rol === "ODONTOLOGO" ? "Odontología" : "Gestión Clínica");
+            setUserRole("Equipo Odontoclinic");
           } else if (user.email) {
             const prefix = user.email.split("@")[0];
             const capitalized = prefix.charAt(0).toUpperCase() + prefix.slice(1);
             if (prefix.toLowerCase().includes("pamela") || prefix.toLowerCase().includes("doctora")) {
               setUserName("Dra. Pamela");
-              setUserRole("Odontología");
+              setUserRole("Equipo Odontoclinic");
             } else {
               setUserName(capitalized);
-              setUserRole("Gestión Clínica");
+              setUserRole("Equipo Odontoclinic");
             }
           }
         }
@@ -249,13 +249,13 @@ export function PanelNavbar() {
 
         {/* Menú móvil flotante superpuesto - Estilo adaptado al tono oscuro */}
         <div
-          className={`md:hidden absolute top-full -mt-px left-0 right-0 z-40 bg-[#0a1826] rounded-b-[28px] shadow-2xl shadow-black/50 border-t border-slate-800/80 transition-all duration-300 ease-in-out origin-top overflow-hidden text-slate-200 ${
+          className={`md:hidden absolute top-full -mt-px left-0 right-0 w-full z-40 bg-[#0a1826] rounded-b-[28px] sm:rounded-b-[36px] shadow-2xl shadow-black/50 border-t border-slate-800/80 transition-all duration-300 ease-in-out origin-top overflow-hidden text-slate-200 ${
             mobileMenuOpen
               ? "opacity-100 translate-y-0 pointer-events-auto max-h-[500px]"
               : "opacity-0 -translate-y-3 pointer-events-none max-h-0"
           }`}
         >
-          <div className="px-5 pt-3 pb-6 space-y-1 divide-y divide-slate-800/80">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-3 pb-6 space-y-1 divide-y divide-slate-800/80">
             {/* Tarjeta de usuario */}
             <div className="pb-3 flex items-center justify-between">
               <div className="flex items-center gap-3">

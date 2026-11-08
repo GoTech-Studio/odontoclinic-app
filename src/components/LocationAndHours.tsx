@@ -8,8 +8,8 @@ import {
   MessageCircle,
   Navigation,
   CheckCircle2,
-  Calendar,
 } from "lucide-react";
+import { WHATSAPP_CLINIC_NUMBER } from "@/config/site-config";
 
 export function LocationAndHours() {
   const [isOpenNow, setIsOpenNow] = useState<boolean>(true);
@@ -122,7 +122,7 @@ export function LocationAndHours() {
                 </div>
                 <div className="flex items-center gap-3 text-slate-300">
                   <Phone className="w-5 h-5 text-cyan-400 shrink-0" />
-                  <span>+591 7890-0000 / Consultorio OdontoClinic</span>
+                  <span>+591 7890-0000 / Consultorio Odontoclinic</span>
                 </div>
               </div>
             </div>
@@ -130,7 +130,7 @@ export function LocationAndHours() {
             {/* Botón WhatsApp */}
             <div className="pt-6">
               <a
-                href="https://wa.me/59178900000?text=Hola%20OdontoClinic%20Camiri,%20deseo%20saber%20la%20direcci%C3%B3n%20exacta%20y%20agendar"
+                href={`https://wa.me/${WHATSAPP_CLINIC_NUMBER}?text=Hola%20Odontoclinic%20Camiri,%20deseo%20saber%20la%20direcci%C3%B3n%20exacta%20y%20agendar`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm shadow-lg transition-all"
@@ -150,7 +150,7 @@ export function LocationAndHours() {
                 <div className="w-3 h-3 rounded-full bg-amber-500" />
                 <div className="w-3 h-3 rounded-full bg-emerald-500" />
                 <span className="text-xs font-semibold text-slate-600 ml-2">
-                  Ubicación OdontoClinic Camiri
+                  Ubicación Odontoclinic Camiri
                 </span>
               </div>
               <a
@@ -178,11 +178,11 @@ export function LocationAndHours() {
                 <line x1="0" y1="0" x2="1000" y2="600" strokeWidth="4" strokeDasharray="6 6" />
               </svg>
 
-              {/* Pin OdontoClinic */}
+              {/* Pin Odontoclinic */}
               <div className="relative z-10 flex flex-col items-center animate-bounce">
                 <div className="px-4 py-2 rounded-2xl bg-slate-900 text-white font-bold text-xs shadow-2xl flex items-center gap-2 border border-cyan-400">
                   <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                  <span>OdontoClinic Camiri</span>
+                  <span>Odontoclinic Camiri</span>
                 </div>
                 <div className="w-4 h-4 bg-slate-900 rotate-45 -mt-2 border-r border-b border-cyan-400" />
                 <div className="w-6 h-6 rounded-full bg-cyan-500/30 flex items-center justify-center mt-1">

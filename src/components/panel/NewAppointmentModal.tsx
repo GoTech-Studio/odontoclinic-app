@@ -57,6 +57,25 @@ interface NewAppointmentModalProps {
   }) => void;
 }
 
+function esFechaDomingo(fechaStr: string): boolean {
+  if (!fechaStr) return false;
+  const [y, m, d] = fechaStr.split("-").map(Number);
+  if (!y || !m || !d) return false;
+  return new Date(y, m - 1, d).getDay() === 0;
+}
+
+function obtenerSiguienteLunes(fechaStr: string): string {
+  const [y, m, d] = fechaStr.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  const day = date.getDay();
+  const delta = day === 0 ? 1 : 8 - day;
+  date.setDate(date.getDate() + delta);
+  const ny = date.getFullYear();
+  const nm = String(date.getMonth() + 1).padStart(2, "0");
+  const nd = String(date.getDate()).padStart(2, "0");
+  return `${ny}-${nm}-${nd}`;
+}
+
 export function NewAppointmentModal({
   isOpen,
   onClose,
@@ -144,13 +163,14 @@ export function NewAppointmentModal({
   }, [fechaCita, horaInicio, horaFinCalculada]);
 
   const validarHorarioAtencion = (fechaStr: string, inicio: string) => {
-    const fechaObj = new Date(fechaStr + "T00:00:00");
+    const [y, m, d] = fechaStr.split("-").map(Number);
+    const fechaObj = new Date(y, m - 1, d);
     const diaSemana = fechaObj.getDay();
-    const [h, m] = inicio.split(":").map(Number);
-    const minutosInicio = h * 60 + m;
+    const [h, min] = inicio.split(":").map(Number);
+    const minutosInicio = h * 60 + min;
 
     if (diaSemana === 0) {
-      return "La clínica no atiende los domingos. Por favor selecciona de lunes a sábado.";
+      return "La clínica no atiende los domingos. Por favor selecciona una fecha de lunes a sábado.";
     }
 
     if (minutosInicio < 9 * 60) {
@@ -167,6 +187,8 @@ export function NewAppointmentModal({
 
     return null;
   };
+
+  const esDomingoSeleccionado = esFechaDomingo(fechaCita);
 
   const formatearFechaHeader = (fechaStr: string) => {
     try {
@@ -292,7 +314,31 @@ export function NewAppointmentModal({
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col">
           <div className="p-5 sm:p-6 space-y-4 flex-1">
             {/* Mensajes de Error o Conflicto */}
-            {error && (
+            {esDomingoSeleccionado && (
+              <div className="flex items-start justify-between gap-2.5 p-3 text-xs font-bold text-rose-800 bg-rose-50 border border-rose-200 rounded-2xl animate-in fade-in">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p>Domingo sin atención</p>
+                    <p className="text-[11px] font-normal text-rose-700 mt-0.5">
+                      No es posible agendar citas los domingos. Selecciona un día de lunes a sábado.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFechaCita(obtenerSiguienteLunes(fechaCita));
+                    setError(null);
+                  }}
+                  className="shrink-0 px-2.5 py-1 rounded-lg bg-white hover:bg-rose-100 text-rose-700 border border-rose-200 text-[11px] font-bold transition-colors cursor-pointer"
+                >
+                  Pasar al lunes
+                </button>
+              </div>
+            )}
+
+            {error && !esDomingoSeleccionado && (
               <div className="flex items-start gap-2 p-3 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-2xl animate-in fade-in">
                 <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                 <span>{error}</span>
@@ -405,8 +451,15 @@ export function NewAppointmentModal({
                   <input
                     type="date"
                     value={fechaCita}
-                    onChange={(e) => setFechaCita(e.target.value)}
-                    className="w-full pl-8 pr-2 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:border-[#0a1826] focus:ring-2 focus:ring-[#0a1826]/10 outline-none transition-all cursor-pointer"
+                    onChange={(e) => {
+                      setFechaCita(e.target.value);
+                      setError(null);
+                    }}
+                    className={`w-full pl-8 pr-2 py-2 rounded-xl border text-xs font-semibold outline-none transition-all cursor-pointer ${
+                      esDomingoSeleccionado
+                        ? "bg-rose-50/70 border-rose-300 text-rose-800 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/15"
+                        : "bg-slate-50 border-slate-200 text-slate-800 focus:bg-white focus:border-[#0a1826] focus:ring-2 focus:ring-[#0a1826]/10"
+                    }`}
                   />
                 </div>
               </div>
@@ -460,7 +513,7 @@ export function NewAppointmentModal({
             </button>
             <button
               type="submit"
-              disabled={Boolean(conflictoHorario)}
+              disabled={esDomingoSeleccionado || Boolean(conflictoHorario)}
               className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#0a1826] hover:bg-[#13273d] active:bg-[#0f2236] text-white text-xs font-bold shadow-md shadow-[#0a1826]/15 hover:shadow-lg transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Check className="w-4 h-4 text-[#0ed5dc]" />

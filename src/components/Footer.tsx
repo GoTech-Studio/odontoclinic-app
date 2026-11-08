@@ -10,7 +10,7 @@ interface FooterProps {
 
 export function Footer({ onOpenBooking }: FooterProps) {
   return (
-    <footer className="bg-[#0a1826] text-slate-300 pt-7 pb-20 sm:pb-10">
+    <footer className="footer-overscroll -mt-px bg-[#0a1826] text-slate-300 pt-7 pb-20 sm:pb-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-5 text-center md:text-left">
           {/* Footer Logo */}
@@ -59,7 +59,7 @@ export function Footer({ onOpenBooking }: FooterProps) {
               href="/login"
               className="text-slate-400 hover:text-[#0ed5dc] transition-colors font-medium underline underline-offset-2 decoration-slate-700 hover:decoration-[#0ed5dc]"
             >
-              Acceso Clínico
+              Acceso Equipo
             </Link>
           </div>
           <p>
