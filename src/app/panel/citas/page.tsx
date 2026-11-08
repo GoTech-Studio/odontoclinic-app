@@ -55,7 +55,7 @@ const DEMO_CITAS: CitaViewModel[] = [
   {
     id: "demo-1",
     pacienteNombre: "Mariana Justiniano",
-    pacienteTelefono: "59174649956",
+    pacienteTelefono: "59170000000",
     horaInicio: "09:00",
     horaFin: "09:45",
     procedimientoNombre: "Limpieza profunda",
@@ -85,11 +85,33 @@ const DEMO_CITAS: CitaViewModel[] = [
   },
 ];
 
+function obtenerFechaHoyBolivia(): string {
+  try {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/La_Paz",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(new Date());
+    const y = parts.find((p) => p.type === "year")?.value;
+    const m = parts.find((p) => p.type === "month")?.value;
+    const d = parts.find((p) => p.type === "day")?.value;
+    if (y && m && d) return `${y}-${m}-${d}`;
+  } catch {
+    // Fallback a fecha local del dispositivo
+  }
+  const ahora = new Date();
+  const y = ahora.getFullYear();
+  const m = String(ahora.getMonth() + 1).padStart(2, "0");
+  const d = String(ahora.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 export default function CitasPage() {
   const [citas, setCitas] = useState<CitaViewModel[]>([]);
-  const [citasFecha, setCitasFecha] = useState<string>("2026-11-07");
+  const [citasFecha, setCitasFecha] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentDate, setCurrentDate] = useState<string>("2026-11-07");
+  const [currentDate, setCurrentDate] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [isLiveFromDb, setIsLiveFromDb] = useState(false);
   const [usuarioActual, setUsuarioActual] = useState<{ id: string; email?: string } | null>(null);
@@ -153,6 +175,9 @@ export default function CitasPage() {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
   useEffect(() => {
+    const hoy = obtenerFechaHoyBolivia();
+    setCurrentDate((prev) => prev || hoy);
+    setCitasFecha((prev) => prev || hoy);
     setCurrentTime(new Date());
     const timer = setInterval(() => setCurrentTime(new Date()), 30000);
     return () => clearInterval(timer);
@@ -196,9 +221,9 @@ export default function CitasPage() {
   }, [currentTime]);
 
   const hoyStr = getHoyStr();
-  const esHoy = Boolean(currentTime && currentDate === hoyStr);
-  const esFuturo = Boolean(currentTime && currentDate > hoyStr);
-  const esPasado = Boolean(currentTime && currentDate < hoyStr);
+  const esHoy = Boolean(hoyStr && currentDate === hoyStr);
+  const esFuturo = Boolean(hoyStr && currentDate > hoyStr);
+  const esPasado = Boolean(hoyStr && currentDate < hoyStr);
 
   // NAVEGACIÓN TOTAL POR FECHAS (Día a día dinámico, botón hoy y selector libre)
   const [navDirection, setNavDirection] = useState<"next" | "prev" | "fade">("fade");
@@ -225,19 +250,17 @@ export default function CitasPage() {
   };
 
   const irAHoy = () => {
-    const ahora = new Date();
-    const y = ahora.getFullYear();
-    const m = String(ahora.getMonth() + 1).padStart(2, "0");
-    const d = String(ahora.getDate()).padStart(2, "0");
-    const hoy = `${y}-${m}-${d}`;
+    const hoy = obtenerFechaHoyBolivia();
     if (hoy !== currentDate) {
       cambiarFechaConAnimacion(hoy, hoy > currentDate ? "next" : "prev");
     }
   };
 
   const formatearFechaEspanol = (fechaStr: string) => {
+    if (!fechaStr) return "Cargando fecha...";
     try {
       const [y, m, d] = fechaStr.split("-").map(Number);
+      if (!y || !m || !d) return "Cargando fecha...";
       const date = new Date(y, m - 1, d);
       const opciones: Intl.DateTimeFormatOptions = {
         weekday: "long",
@@ -253,8 +276,10 @@ export default function CitasPage() {
   };
 
   const formatearFechaEspanolCorta = (fechaStr: string) => {
+    if (!fechaStr) return "Cargando...";
     try {
       const [y, m, d] = fechaStr.split("-").map(Number);
+      if (!y || !m || !d) return "Cargando...";
       const date = new Date(y, m - 1, d);
       const opciones: Intl.DateTimeFormatOptions = {
         weekday: "short",
@@ -269,7 +294,7 @@ export default function CitasPage() {
   };
 
   const obtenerEtiquetaRelativa = (fechaStr: string) => {
-    if (!currentTime) return null;
+    if (!currentTime || !fechaStr) return null;
     const hoyY = currentTime.getFullYear();
     const hoyM = String(currentTime.getMonth() + 1).padStart(2, "0");
     const hoyD = String(currentTime.getDate()).padStart(2, "0");
@@ -321,6 +346,7 @@ export default function CitasPage() {
 
   // Carga de citas desde Supabase
   const cargarCitas = useCallback(async () => {
+    if (!currentDate) return;
     setLoading(true);
     try {
       const supabase = createClient();
@@ -330,9 +356,12 @@ export default function CitasPage() {
 
       setUsuarioActual(user);
 
+      const [cy, cm, cd] = currentDate.split("-").map(Number);
+      const esDomingoActual = new Date(cy, cm - 1, cd).getDay() === 0;
+
       if (!user) {
-        // Si no está logueado, mostramos datos de demo para que no se vea vacío en hoy
-        if (currentDate === "2026-11-07") {
+        // Si no está logueado, mostramos datos de demo para que no se vea vacío en días hábiles de hoy
+        if (!esDomingoActual && currentDate === obtenerFechaHoyBolivia()) {
           setCitas(DEMO_CITAS);
         } else {
           setCitas([]);
@@ -355,7 +384,9 @@ export default function CitasPage() {
       setIsLiveFromDb(true);
     } catch (err) {
       console.warn("Usando datos de muestra (no se pudo conectar con Supabase):", err);
-      setCitas(currentDate === "2026-11-07" ? DEMO_CITAS : []);
+      const [cy, cm, cd] = currentDate.split("-").map(Number);
+      const esDomingoActual = new Date(cy, cm - 1, cd).getDay() === 0;
+      setCitas(!esDomingoActual && currentDate === obtenerFechaHoyBolivia() ? DEMO_CITAS : []);
       setCitasFecha(currentDate);
       setIsLiveFromDb(false);
     } finally {
