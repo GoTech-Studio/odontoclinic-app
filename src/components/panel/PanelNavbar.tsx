@@ -175,10 +175,7 @@ export function PanelNavbar() {
                   {userName.charAt(0).toUpperCase()}
                 </div>
                 <div className="hidden sm:block text-left">
-                  <p className="text-xs font-bold text-white leading-tight">
-                    {saludo}, <span className="text-[#0ed5dc]">{userName}</span>
-                  </p>
-                  <p className="text-[10px] text-slate-400 font-medium leading-tight">
+                  <p className="text-xs font-bold text-slate-200 leading-tight">
                     {userRole}
                   </p>
                 </div>
